@@ -53,22 +53,20 @@ protected[levenshteinautomaton] sealed trait ImageSet {
 
   def size: Int
 
-  protected[description] def accumulate(accumulator: ImageSet)(f: Position => Boolean): ImageSet
+  protected[nonparametric] def accumulate(accumulator: ImageSet)(f: Position => Boolean): ImageSet
 
-  protected[description] def add(position: Position): ImageSet
+  protected[nonparametric] def add(position: Position): ImageSet
 
-  protected[description] def +(position: Position) = add(position)
+  protected[nonparametric] def +(position: Position) = add(position)
 }
 
 
 protected[levenshteinautomaton] object EmptyImageSet extends ImageSet {
-  def reducedAdd(position: Position) = add(position)
+  def reducedAdd(position: Position):ImageSet = add(position)
 
   def subsumes(position: Position) = false
 
-  def minBoundary = throw new NoSuchElementException
-
-  def maxBoundaryPosition = throw new NoSuchElementException
+  def minBoundary: Int = throw new NoSuchElementException
 
   val isEmpty = true
 
@@ -80,9 +78,9 @@ protected[levenshteinautomaton] object EmptyImageSet extends ImageSet {
 
   val size = 0
 
-  protected[description] def accumulate(accumulator: ImageSet)(f: Position => Boolean) = accumulator
+  protected[nonparametric] def accumulate(accumulator: ImageSet)(f: Position => Boolean) = accumulator
 
-  protected[description] def add(position: Position) =
+  protected[nonparametric] def add(position: Position) =
     new NonEmptyImageSet(position, EmptyImageSet, EmptyImageSet)
 
   override def toString = "{}"
@@ -102,12 +100,12 @@ class NonEmptyImageSet(element: Position, left: ImageSet, right: ImageSet) exten
       !position.subsumes(_)
     }
 
-  protected[description] def accumulate(accumulator: ImageSet)(f: Position => Boolean) = {
+  protected[nonparametric] def accumulate(accumulator: ImageSet)(f: Position => Boolean) = {
     if (f(element)) left.accumulate(right.accumulate(accumulator + element)(f))(f)
     else left.accumulate(right.accumulate(accumulator)(f))(f)
   }
 
-  protected[description] def add(position: Position): ImageSet = {
+  protected[nonparametric] def add(position: Position): ImageSet = {
     if (position < element) new NonEmptyImageSet(element, left + position, right)
     else if (position > element) new NonEmptyImageSet(element, left, right + position)
     else this

@@ -26,4 +26,11 @@ class FailureStateSpec extends Specification {
   "transit to failure state only" >> {
     FailureState.transit('x') must be equalTo FailureState
   }
+
+  "equals to FailureState" >> {
+    implicit val automatonConfig = DefaultAutomatonConfig("10101010", degree = 5)
+
+    FailureState != State(0 ^# 0, 1 ^# 0, 2 ^# 0) must beTrue
+    FailureState == FailureState must beTrue
+  }
 }

@@ -6,8 +6,8 @@ protected[levenshteinautomaton] sealed trait Position extends Ordered[Position] 
   assert(i >= 0)
   assert(e >= 0)
 
-  protected lazy val w = automatonCharacteristic.w
-  protected lazy val n = automatonCharacteristic.n
+  protected lazy val w = automatonConfig.w
+  protected lazy val n = automatonConfig.n
 
   /**
    * Boundary of an input word.
@@ -19,7 +19,7 @@ protected[levenshteinautomaton] sealed trait Position extends Ordered[Position] 
    */
   def e: Int
 
-  def automatonCharacteristic: DefaultAutomatonConfig
+  def automatonConfig: DefaultAutomatonConfig
 
   /**
    * Whether current position subsumes a passed position.
@@ -40,7 +40,7 @@ protected[levenshteinautomaton] sealed trait Position extends Ordered[Position] 
 
 protected[levenshteinautomaton]
 case class StandardPosition(i: Int, e: Int,
-                            automatonCharacteristic: DefaultAutomatonConfig)
+                            automatonConfig: DefaultAutomatonConfig)
   extends Position {
 
   def subsumes(p: Position) = p match {
@@ -66,7 +66,7 @@ case class StandardPosition(i: Int, e: Int,
 
 protected[levenshteinautomaton]
 case class TPosition(i: Int, e: Int,
-                     automatonCharacteristic: DefaultAutomatonConfig)
+                     automatonConfig: DefaultAutomatonConfig)
   extends Position {
 
   def subsumes(p: Position) = p match {

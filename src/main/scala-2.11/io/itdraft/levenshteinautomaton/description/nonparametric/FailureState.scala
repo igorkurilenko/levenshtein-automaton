@@ -18,8 +18,10 @@ object FailureState extends NonParametricState {
 
   override lazy val relevantSubwordMaxLength = 0
 
-  override def equals(obj: scala.Any): Boolean =
-    obj.isInstanceOf[State] && obj.asInstanceOf[State].isFailure
+  override def equals(obj: scala.Any): Boolean =  obj match {
+    case other: State => other.isFailure
+    case _ => false
+  }
 
   override def toString = "\u00D8"
 }
