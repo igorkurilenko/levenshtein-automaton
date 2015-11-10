@@ -5,6 +5,7 @@ import io.itdraft.levenshteinautomaton.description.State
 import org.specs2.mutable.Specification
 
 class FailureStateSpec extends Specification {
+  implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
 
   "is failure" >> {
     FailureState.isFailure must beTrue
@@ -16,8 +17,6 @@ class FailureStateSpec extends Specification {
 
   "reducedUnion with other state" should {
     "return other state" in {
-      implicit val automatonConfig = DefaultAutomatonConfig("10101010", degree = 5)
-
       FailureState.reducedUnion(State(0 ^# 0, 1 ^# 0, 2 ^# 0)) must
         be equalTo State(0 ^# 0, 1 ^# 0, 2 ^# 0)
     }
@@ -28,8 +27,6 @@ class FailureStateSpec extends Specification {
   }
 
   "equals to FailureState" >> {
-    implicit val automatonConfig = DefaultAutomatonConfig("10101010", degree = 5)
-
     FailureState != State(0 ^# 0, 1 ^# 0, 2 ^# 0) must beTrue
     FailureState == FailureState must beTrue
   }

@@ -4,6 +4,7 @@ import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
 import org.specs2.mutable.Specification
 
 class EmptyImageSetSpec extends Specification {
+  implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
 
   "has not minBoundary" >> {
     EmptyImageSet.minBoundary must throwA[NoSuchElementException]
@@ -19,17 +20,12 @@ class EmptyImageSetSpec extends Specification {
 
   "reducedAdd" should {
     "return NonEmptyImageSet" in {
-      val c = DefaultAutomatonConfig("10101010", degree = 5)
-
-      EmptyImageSet.reducedAdd(StandardPosition(0, 0, c)).isEmpty must beFalse
+      EmptyImageSet.reducedAdd(0 ^# 0).isEmpty must beFalse
     }
   }
 
   "equals to EmptyImageSet" >> {
-    val c = DefaultAutomatonConfig("10101010", degree = 5)
-
-    EmptyImageSet != EmptyImageSet.reducedAdd(StandardPosition(0, 0, c)) must beTrue
+    EmptyImageSet != EmptyImageSet.reducedAdd(0 ^# 0) must beTrue
     EmptyImageSet == EmptyImageSet must beTrue
   }
-
 }

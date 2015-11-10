@@ -1,4 +1,4 @@
-name := "levenshteinautomaton"
+name := "fast-string-correction"
 
 version := "1.0"
 

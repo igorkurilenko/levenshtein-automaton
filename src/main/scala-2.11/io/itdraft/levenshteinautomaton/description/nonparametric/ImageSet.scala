@@ -3,7 +3,7 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
 protected[levenshteinautomaton] sealed trait ImageSet {
   /**
    * Returns a new `ImageSet` which does not contain any position that is subsumed
-   * by another element of the image set. A `position` is included in the image set
+   * by any element of the image set. A `position` is included in the image set
    * in case it does not already exist and does not subsumed by any position in the
    * image set. Result set does not contain any element subsumes by a `position`.
    */
@@ -11,7 +11,7 @@ protected[levenshteinautomaton] sealed trait ImageSet {
 
   /**
    * Returns a new `ImageSet` which does not contain any position that is subsumed
-   * by another element of the image set. A `position` is included in the image set
+   * by any element of the image set. A `position` is included in the image set
    * in case it does not already exist and does not subsumed by any position in the
    * image set. Result set does not contain any element subsumes by a `position`.
    */
