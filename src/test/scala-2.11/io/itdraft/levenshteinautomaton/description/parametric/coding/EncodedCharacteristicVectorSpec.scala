@@ -5,7 +5,7 @@ import org.specs2.mutable.Specification
 class EncodedCharacteristicVectorSpec extends Specification {
    import io.itdraft.levenshteinautomaton._
 
-   "Size" should {
+   "Characteristic vector size" should {
      "be equal to 0 for empty characteristic vector" in {
        EncodedCharacteristicVector.Empty.size must be equalTo 0
      }
@@ -35,19 +35,19 @@ class EncodedCharacteristicVectorSpec extends Specification {
    """Minimal index j in the characteristic vector of the "hello"""" should {
      val word: String = "hello"
 
-     "be equal to 3 for symbol 'l'" in {
+     "be equal to 3 for the 'l' symbol" in {
        EncodedCharacteristicVector('l', word, 0, word.length).j must be equalTo 3
      }
 
-     "be equal to 1 for symbol 'h'" in {
+     "be equal to 1 for the 'h' symbol" in {
        EncodedCharacteristicVector('h', word, 0, word.length).j must be equalTo 1
      }
 
-     "be equal to 5 for symbol 'o'" in {
+     "be equal to 5 for the 'o' symbol" in {
        EncodedCharacteristicVector('o', word, 0, word.length).j must be equalTo 5
      }
 
-     "be equal to -1 for symbol 'x'" in {
+     "be equal to -1 for the 'x' symbol" in {
        EncodedCharacteristicVector('x', word, 0, word.length).j must be equalTo -1
      }
    }

@@ -7,27 +7,27 @@ import org.specs2.mutable.Specification
 class FailureStateSpec extends Specification {
   implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
 
-  "is failure" >> {
-    FailureState.isFailure must beTrue
-  }
+  "The failure state" should {
+    "be failure" in {
+      FailureState.isFailure must beTrue
+    }
 
-  "is not final" >> {
-    FailureState.isFinal must beFalse
-  }
+    "be not final" in {
+      FailureState.isFinal must beFalse
+    }
 
-  "reducedUnion with other state" should {
-    "return other state" in {
+    "return other state on reduced union with other state" in {
       FailureState.reducedUnion(State(0 ^# 0, 1 ^# 0, 2 ^# 0)) must
         be equalTo State(0 ^# 0, 1 ^# 0, 2 ^# 0)
     }
-  }
 
-  "transit to failure state only" >> {
-    FailureState.transit('x') must be equalTo FailureState
-  }
+    "transit to failure state only" in {
+      FailureState.transit('x') must be equalTo FailureState
+    }
 
-  "equals to FailureState" >> {
-    FailureState != State(0 ^# 0, 1 ^# 0, 2 ^# 0) must beTrue
-    FailureState == FailureState must beTrue
+    "be equal to failure state only" >> {
+      FailureState != State(0 ^# 0, 1 ^# 0, 2 ^# 0) must beTrue
+      FailureState == FailureState must beTrue
+    }
   }
 }
