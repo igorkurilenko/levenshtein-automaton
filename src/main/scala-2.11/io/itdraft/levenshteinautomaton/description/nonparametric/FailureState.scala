@@ -23,5 +23,7 @@ object FailureState extends NonParametricState {
     case _ => false
   }
 
+  override lazy val hashCode = 0
+
   override def toString = "\u00D8"
 }

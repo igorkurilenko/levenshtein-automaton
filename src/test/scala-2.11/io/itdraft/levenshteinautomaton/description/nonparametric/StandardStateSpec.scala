@@ -9,8 +9,49 @@ class StandardStateSpec extends Specification with Tables {
   import io.itdraft.levenshteinautomaton._
   import io.itdraft.levenshteinautomaton.description.nonparametric._
 
+  "The {7^#5, 8^#5} state" should {
+    implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
+    val state = State(7 ^# 5, 8 ^# 5)
+
+    "be not failure if w=8, n=5" in {
+      state.isFailure must beFalse
+    }
+
+    "be final if w=8, n=5" in {
+      state.isFinal must beTrue
+    }
+
+    "be equal to the {8^#5,7^#5} state" in {
+      state must be equalTo State(8 ^# 5, 7 ^# 5)
+    }
+
+    "be not equal to the {8^#5} state" in {
+      state must not equalTo State(8 ^# 5)
+    }
+
+    "have a hash code equal to the {8^#5,7^#5} state's hash code" in {
+      state.hashCode must be equalTo State(8 ^# 5, 7 ^# 5).hashCode
+    }
+
+    "have a hash code which is not equal to the {8^#5} state's hash code" in {
+      state.hashCode must not equalTo State(8 ^# 5).hashCode
+    }
+
+    "have a hash code which is not equal to the failure state's hash code" in {
+      state.hashCode must not equalTo FailureState.hashCode
+    }
+  }
+
+  "The {7^#5} state" should {
+    implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
+
+    "be not final if w=8, n=5" in {
+      State(7 ^# 5).isFinal must beFalse
+    }
+  }
+
   "Standard state reduced union operation" should {
-    implicit val automatonConfig = DefaultAutomatonConfig("10101010", degree = 5)
+    implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
 
     "generate new state with eliminated subsumed positions" in {
       val m = State(0 ^# 0, 1 ^# 0, 2 ^# 0)
@@ -46,7 +87,7 @@ class StandardStateSpec extends Specification with Tables {
         (7, 5) ::(9, 4) :: Nil ! (9, 5) ::(10, 5) :: Nil ! "0000000000" ! '1' ! 5 ! false |
         (9, 5) ::(10, 5) :: Nil ! Nil ! "0000000000" ! '1' ! 5 ! false | {
         (from, to, word, symbol, degree, inclTranspositions) =>
-          implicit val automatonConfig = DefaultAutomatonConfig(word, degree, inclTranspositions)
+          implicit val _ = DefaultAutomatonConfig(word, degree, inclTranspositions)
 
           (from: NonParametricState).transit(symbol) must be equalTo to
       }

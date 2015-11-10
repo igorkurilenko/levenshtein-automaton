@@ -83,12 +83,14 @@ protected[levenshteinautomaton] object EmptyImageSet extends ImageSet {
   protected[nonparametric] def add(position: Position) =
     new NonEmptyImageSet(position, EmptyImageSet, EmptyImageSet)
 
-  override def toString = "{}"
-
   override def equals(obj: scala.Any): Boolean = obj match {
     case other: ImageSet => other.isEmpty
     case _ => false
   }
+
+  override lazy val hashCode = 0
+
+  override def toString = "{}"
 }
 
 
