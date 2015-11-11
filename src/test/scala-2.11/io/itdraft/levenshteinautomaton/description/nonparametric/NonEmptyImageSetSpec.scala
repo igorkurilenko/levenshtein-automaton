@@ -85,13 +85,15 @@ class NonEmptyImageSetSpec extends Specification {
     }
   }
 
-  "The {7^#5, 9^#4} image set" should {
+  "The {7^#5, 8^#5} image set" should {
+    val imageSet = ImageSet(7 ^# 5, 8 ^# 5)
+
     "have a min boundary equal to 7" in {
-      ImageSet(7 ^# 5, 9 ^# 4).minBoundary must be equalTo 7
+      imageSet.minBoundary must be equalTo 7
     }
 
     "have a size equal to 2" in {
-      ImageSet(7 ^# 5, 9 ^# 4).size must be equalTo 2
+      imageSet.size must be equalTo 2
     }
   }
 
