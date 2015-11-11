@@ -9,7 +9,7 @@ class StandardPositionSpec extends Specification {
   "The 7^#4 position (w=8,n=5)" should {
     val position: Position = 7 ^# 4
 
-    "be accepting" in {
+    "be an accepting" in {
       position.isAccepting must beTrue
     }
 
@@ -38,26 +38,43 @@ class StandardPositionSpec extends Specification {
       position.relevantSubwordMaxLength must be equalTo 1
     }
 
-    "have a hash code which is not equal to the 4^#7 position's hash code" in {
-      position.hashCode must not equalTo (4 ^# 7).hashCode
+    "have a hash code which is equal to the 7^#4 position's hash code" in {
+      position.hashCode must be equalTo (7 ^# 4).hashCode
     }
 
-    "be less than 8^#4" in {
+    "have a hash code which is not equal to the 7^#4 t-position's hash code" in {
+      position.hashCode must not equalTo TPosition(7, 4, c).hashCode
+    }
+
+    "be less than 8^#4 (both position and t-position)" in {
       position < (8 ^# 4) must beTrue
+      position < TPosition(8, 4, c) must beTrue
     }
 
-    "be less than 6^#5" in {
+    "be less than 6^#5 (both position and t-position)" in {
       position < (6 ^# 5) must beTrue
+      position < TPosition(6, 5, c) must beTrue
     }
 
-    "be greater than 8^#3" in {
+    "be greater than 8^#3 (both position and t-position)" in {
       position > (8 ^# 3) must beTrue
+      position > TPosition(8, 3, c) must beTrue
+    }
+
+    "be greater than the 7^#4 t-position" in {
+      position > TPosition(7, 4, c) must beTrue
     }
   }
 
-  "The 6^#4 position (w=8,n=5)" should {
-    "not be accepting" in {
-      (6 ^# 4).isAccepting must beFalse
+  "The 5^#3 position (w=8,n=5)" should {
+    val position: Position = 5 ^# 3
+
+    "not be an accepting" in {
+      position.isAccepting must beFalse
+    }
+
+    "have a hash code which is not equal to the 3^#5 position's hash code" in {
+      position.hashCode must not equalTo (3 ^# 5).hashCode
     }
   }
 }

@@ -3,8 +3,8 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
 import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
 
 protected[levenshteinautomaton] sealed trait Position extends Ordered[Position] {
-  assert(i >= 0)
-  assert(e >= 0)
+  assert(0 <= i && i <= w)
+  assert(0 <= e && e <= n)
 
   protected lazy val w = automatonConfig.w
   protected lazy val n = automatonConfig.n
@@ -63,9 +63,9 @@ case class StandardPosition(i: Int, e: Int, automatonConfig: DefaultAutomatonCon
   }
 }
 
+
 protected[levenshteinautomaton]
-case class TPosition(i: Int, e: Int,
-                     automatonConfig: DefaultAutomatonConfig)
+case class TPosition(i: Int, e: Int, automatonConfig: DefaultAutomatonConfig)
   extends Position {
 
   def subsumes(p: Position) = p match {
