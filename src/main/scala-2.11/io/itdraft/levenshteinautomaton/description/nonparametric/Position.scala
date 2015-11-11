@@ -39,8 +39,7 @@ protected[levenshteinautomaton] sealed trait Position extends Ordered[Position] 
 
 
 protected[levenshteinautomaton]
-case class StandardPosition(i: Int, e: Int,
-                            automatonConfig: DefaultAutomatonConfig)
+case class StandardPosition(i: Int, e: Int, automatonConfig: DefaultAutomatonConfig)
   extends Position {
 
   def subsumes(p: Position) = p match {
