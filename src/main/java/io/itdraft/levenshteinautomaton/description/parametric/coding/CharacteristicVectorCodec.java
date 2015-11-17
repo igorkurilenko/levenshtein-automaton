@@ -38,9 +38,8 @@ public final class CharacteristicVectorCodec {
     }
 
     /**
-     * <quote><code>j&#8712;{1, ..., k}</code> is the minimal index in the characteristic vector
+     * <code>j&#8712;{1, ..., k}</code> is the minimal index in the characteristic vector
      * <code>&lt;b<sub>1</sub>, ..., b<sub>k</sub>&gt;</code> where <code>b<sub>j</sub> = 1</code>.
-     * </quote></p>
      *
      * @return Minimal index <code>j</code> where <code>b<sub>j</sub>=1</code> in the characteristic
      * vector or <code>-1</code> if <code>b<sub>j</sub>=0</code> for any <code>j</code>.

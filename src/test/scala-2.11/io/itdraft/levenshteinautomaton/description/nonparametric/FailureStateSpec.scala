@@ -25,7 +25,7 @@ class FailureStateSpec extends Specification {
       FailureState.transit('x') must be equalTo FailureState
     }
 
-    "be equal to failure state only" >> {
+    "be equal to failure state only" in {
       FailureState != State(0 ^# 0, 1 ^# 0, 2 ^# 0) must beTrue
       FailureState == FailureState must beTrue
     }

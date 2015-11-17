@@ -4,7 +4,7 @@ import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
 import org.specs2.mutable.Specification
 
 class StandardPositionSpec extends Specification {
-  implicit val c = DefaultAutomatonConfig("10101010", degree = 5)
+  implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
 
   "The 7^#4 position (w=8,n=5)" should {
     val position: Position = 7 ^# 4
@@ -26,12 +26,12 @@ class StandardPositionSpec extends Specification {
     }
 
     "subsume 5^#5, 6^#5 t-positions" in {
-      position.subsumes(TPosition(5, 5, c)) must beTrue
-      position.subsumes(TPosition(6, 5, c)) must beTrue
+      position.subsumes(5.t ^# 5) must beTrue
+      position.subsumes(6.t ^# 5) must beTrue
     }
 
     "not subsume 4^#5 t-positions" in {
-      position.subsumes(TPosition(4, 5, c)) must beFalse
+      position.subsumes(4.t ^# 5) must beFalse
     }
 
     "permit relevant subword max length equal to 1" in {
@@ -43,26 +43,26 @@ class StandardPositionSpec extends Specification {
     }
 
     "have a hash code which is not equal to the 7^#4 t-position's hash code" in {
-      position.hashCode must not equalTo TPosition(7, 4, c).hashCode
+      position.hashCode must not equalTo (7.t ^# 4).hashCode
     }
 
     "be less than 8^#4 (both position and t-position)" in {
       position < (8 ^# 4) must beTrue
-      position < TPosition(8, 4, c) must beTrue
+      position < (8.t ^# 4) must beTrue
     }
 
     "be less than 6^#5 (both position and t-position)" in {
       position < (6 ^# 5) must beTrue
-      position < TPosition(6, 5, c) must beTrue
+      position < (6.t ^# 5) must beTrue
     }
 
     "be greater than 8^#3 (both position and t-position)" in {
       position > (8 ^# 3) must beTrue
-      position > TPosition(8, 3, c) must beTrue
+      position > (8.t ^# 3) must beTrue
     }
 
     "be greater than the 7^#4 t-position" in {
-      position > TPosition(7, 4, c) must beTrue
+      position > (7.t ^# 4) must beTrue
     }
   }
 

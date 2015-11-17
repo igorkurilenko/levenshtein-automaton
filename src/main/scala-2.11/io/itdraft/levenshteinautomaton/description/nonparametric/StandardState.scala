@@ -6,23 +6,31 @@ import io.itdraft.levenshteinautomaton.description._
 protected[levenshteinautomaton]
 class StandardState(val imageSet: ImageSet,
                     val automatonConfig: DefaultAutomatonConfig)
-  extends NonParametricState {
+  extends NonparametricState {
+
   assert(!imageSet.isEmpty)
+
+  private lazy val w = automatonConfig.w
+  private lazy val n = automatonConfig.n
 
   private implicit val _ = automatonConfig
 
   private val elementaryTransition = ElementaryTransition()
 
+  lazy val relevantSubwordMaxLength = Math.min(2 * n + 1, w - minBoundary)
+
+  lazy val minBoundary = imageSet.minBoundary
+
   val isFailure = false
 
   lazy val isFinal = imageSet.exists(_.isAccepting)
 
-  def reducedUnion(other: NonParametricState): NonParametricState =
+  def reducedUnion(other: NonparametricState): NonparametricState =
     if (other.isFailure) this
     else State(other.imageSet.fold(imageSet)(_.reducedAdd(_)))
 
   def transit(x: Int) =
-    imageSet.fold(FailureState: NonParametricState) { (state, position) =>
+    imageSet.fold(FailureState: NonparametricState) { (state, position) =>
       val v = relevantSubwordCharacteristicVector(position, x)
 
       state |~ elementaryTransition(position, v)
@@ -33,11 +41,13 @@ class StandardState(val imageSet: ImageSet,
       position.i, position.i + position.relevantSubwordMaxLength)
 
   override def equals(obj: scala.Any): Boolean = obj match {
-    case other: NonParametricState if !other.isFailure =>
+    case other: NonparametricState if !other.isFailure =>
       imageSet == other.imageSet
 
     case _ => false
   }
 
   override lazy val hashCode = imageSet.hashCode
+
+  override def toString = imageSet.toString
 }

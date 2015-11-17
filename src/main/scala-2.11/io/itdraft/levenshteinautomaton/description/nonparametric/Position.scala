@@ -10,30 +10,30 @@ protected[levenshteinautomaton] sealed trait Position extends Ordered[Position] 
   protected lazy val n = automatonConfig.n
 
   /**
-   * Boundary of an input word.
-   */
+    * Boundary of an input word.
+    */
   def i: Int
 
   /**
-   * Number of edit operations have occurred.
-   */
+    * Number of edit operations have occurred.
+    */
   def e: Int
 
   def automatonConfig: DefaultAutomatonConfig
 
   /**
-   * Whether current position subsumes a passed position.
-   */
+    * Whether current position subsumes a passed position.
+    */
   def subsumes(p: Position): Boolean
 
   /**
-   * Tests if this `Position` is an accepting position.
-   */
+    * Tests if this `Position` is an accepting position.
+    */
   def isAccepting: Boolean
 
   /**
-   * Returns the max length of a relevant subword for this `Position`.
-   */
+    * Returns the max length of a relevant subword for this `Position`.
+    */
   def relevantSubwordMaxLength: Int
 }
 

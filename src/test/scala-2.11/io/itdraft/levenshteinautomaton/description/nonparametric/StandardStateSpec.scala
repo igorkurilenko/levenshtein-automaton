@@ -89,13 +89,13 @@ class StandardStateSpec extends Specification with Tables {
         (from, to, word, symbol, degree, inclTranspositions) =>
           implicit val _ = DefaultAutomatonConfig(word, degree, inclTranspositions)
 
-          (from: NonParametricState).transit(symbol) must be equalTo to
+          (from: NonparametricState).transit(symbol) must be equalTo to
       }
     }
   }
 
   implicit def conversionToState(stateFormat: List[(Int, Int)])
-                                (implicit c: DefaultAutomatonConfig): NonParametricState =
+                                (implicit c: DefaultAutomatonConfig): NonparametricState =
     stateFormat match {
       case Nil => FailureState
       case ps => State(ps.map(t => t._1 ^# t._2): _*)

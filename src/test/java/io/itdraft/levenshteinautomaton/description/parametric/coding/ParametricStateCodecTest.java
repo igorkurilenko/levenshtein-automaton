@@ -20,7 +20,7 @@ public class ParametricStateCodecTest {
 
     @Test
     public void testIsFinal() throws Exception {
-        assertTrue(ParametricStateCodec.isFinal(44, 7, 2, EncodedParametricDscr.get(1, true)));
+        assertTrue(ParametricStateCodec.isFinal(44, 7, 2, EncodedParametricDescription.get(1, true)));
     }
 
     @Test

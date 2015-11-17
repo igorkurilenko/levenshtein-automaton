@@ -1,6 +1,6 @@
 package io.itdraft.levenshteinautomaton;
 
-import io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDscr;
+import io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDescription;
 import io.itdraft.levenshteinautomaton.description.parametric.coding.ParametricStateCodec;
 
 public class ParametricLevenshteinAutomaton {
@@ -10,14 +10,14 @@ public class ParametricLevenshteinAutomaton {
     private final String word;
     private final int n;
     private final int w;
-    private final EncodedParametricDscr parametricDescription;
+    private final EncodedParametricDescription parametricDescription;
     private int statesCount;
 
     public static ParametricLevenshteinAutomaton create(
             String word, int degree,
             boolean inclTranspositions) throws ParametricDescriptionNotFoundException {
-        EncodedParametricDscr parametricDescription =
-                EncodedParametricDscr.get(degree, inclTranspositions);
+        EncodedParametricDescription parametricDescription =
+                EncodedParametricDescription.get(degree, inclTranspositions);
 
         if (parametricDescription == null) {
             ParametricDescriptionNotFoundException.throwFor(degree, inclTranspositions);
@@ -29,7 +29,7 @@ public class ParametricLevenshteinAutomaton {
     private ParametricLevenshteinAutomaton(
             String word,
             int degree,
-            EncodedParametricDscr parametricDescription) {
+            EncodedParametricDescription parametricDescription) {
         this.word = word;
         this.parametricDescription = parametricDescription;
         this.statesCount = parametricDescription.getStatesCount();

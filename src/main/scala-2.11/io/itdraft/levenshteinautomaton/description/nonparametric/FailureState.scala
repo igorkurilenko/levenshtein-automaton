@@ -2,28 +2,63 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
 
 import io.itdraft.levenshteinautomaton.description._
 
-protected[levenshteinautomaton]
-object FailureState extends NonParametricState {
-  def imageSet: ImageSet = EmptyImageSet
+/**
+  * A class to represent the nonparametric failure state.
+  */
+protected[levenshteinautomaton] object FailureState extends NonparametricState {
 
-  def automatonConfig = throw new NoSuchElementException
-
+  /**
+    * Tests if it's a failure state or not. Always `true` for `FailureState`.
+    */
   val isFailure = true
 
+  /**
+    *Tests if it's a final state or not. Always `false` for `FailureState`.
+    */
   val isFinal = false
 
-  def reducedUnion(other: NonParametricState): NonParametricState = other
-
-  def transit(x: Int) = this
-
+  /**
+    * The max relevant subword length of `FailureState` is 0.
+    */
   override lazy val relevantSubwordMaxLength = 0
 
-  override def equals(obj: scala.Any): Boolean =  obj match {
+  /**
+    * The `FailureState` image set is `EmptyImageSet`.
+    */
+  override val imageSet = EmptyImageSet
+
+  /**
+    * The reduced union of two states is a union of this states with omission
+    * of states that are subsumed by other states.
+    *
+    * @param other `NonparametricState` to execute reduced union with.
+    * @return The reduced union of `FailureState` always returns `other`.
+    */
+  def reducedUnion(other: NonparametricState): NonparametricState = other
+
+  /**
+    * Returns a new `State` produced by elementary transitions of this `State`'s positions.
+    * `FailureState` can transit to `FailureState` only.
+    *
+    * @param symbolCodePoint Symbol's code point.
+    */
+  def transit(symbolCodePoint: Int) = this
+
+  /**
+    * The equality method for `FailureState`.
+    */
+  override def equals(obj: scala.Any): Boolean = obj match {
     case other: State => other.isFailure
     case _ => false
   }
 
-  override lazy val hashCode = 0
+  /**
+    * The hash code for `FailureState`.
+    */
+  override val hashCode = 0
 
-  override def toString = "\u00D8"
+  /**
+    * Creates a `String` representation of this object.
+    */
+  override val toString = "\u00D8"
 }

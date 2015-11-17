@@ -1,38 +1,99 @@
 package io.itdraft.levenshteinautomaton
 
-import io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDscr
+import io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDescription
 
-protected[levenshteinautomaton]
+/**
+  * A trait to represent a configuration to build the Levenshtein-automaton.
+  */
 sealed trait AutomatonConfig {
+
+  /**
+    * Max boundary of a word Levenshtein-automaton is built for.
+    */
   lazy val w = word.codePointsCount
+
+  /**
+    * Degree of the Levenshtein-automaton.
+    */
   lazy val n = degree
 
+  /**
+    * A word to build Levenshtein-automaton for.
+    */
   def word: String
 
+  /**
+    * Automaton recognizes the set of all words
+    * where the Levenshtein-distance between a word from the set
+    * and a word automaton is built for does not exceed `degree`.
+    */
   def degree: Int
+
+  /**
+    * Include transposition as a primitive edit operation.
+    */
+  def inclTransposition: Boolean
 }
 
+object AutomatonConfig {
 
-protected[levenshteinautomaton]
+  /**
+    * @param word A word to build Levenshtein-automaton for.
+    * @param automatonDegree Automaton recognizes the set of all words
+    *                        where the Levenshtein-distance between a word from the set
+    *                        and a word automaton is built for does not exceed `degree`.
+    * @param inclTransposition Include transposition as a primitive edit operation.
+    * @return An instance of `AutomatonConfigWithWithEncParametricDescr` if a parametric
+    *         description for the specified parameters exists or an instance of
+    *         `DefaultAutomatonConfig` otherwise.
+    */
+  def apply(word: String, automatonDegree: Int, inclTransposition: Boolean) =
+    Option(EncodedParametricDescription.get(automatonDegree, inclTransposition)) match {
+      case Some(parametricDescription) =>
+        AutomatonConfigWithWithEncodedParametricDescription(word, parametricDescription)
+      case None => DefaultAutomatonConfig(word, automatonDegree, inclTransposition)
+    }
+}
+
+/**
+  * A class to represent a configuration for the nonparametrically described
+  * Levenshtein-automaton. Use this configuration to create an automaton which
+  * is computed at run time.
+  *
+  * @param word A word to build Levenshtein-automaton for.
+  * @param degree Automaton recognizes the set of all words
+  *               where the Levenshtein-distance between a word from the set
+  *               and a word automaton is built for does not exceed `degree`.
+  * @param inclTransposition Include transposition as a primitive edit operation.
+  */
 case class DefaultAutomatonConfig(word: String,
                                   degree: Int,
-                                  inclTranspositions: Boolean = false)
+                                  inclTransposition: Boolean = false)
   extends AutomatonConfig
 
+/**
+  * A class to represent a configuration for the parametrically described
+  * Levenshtein-automaton. Using this configuration avoids the actual
+  * computation of automaton.
+  *
+  * @param word A word to build Levenshtein-automaton for.
+  * @param encodedParametricDescription Encoded parametric description of the Levenshtein-automaton.
+  *                                     Use the `ParametricDescriptionEncoder` app to create one.
+  */
+case class AutomatonConfigWithWithEncodedParametricDescription(word: String,
+                                                               encodedParametricDescription:
+                                                               EncodedParametricDescription)
+  extends AutomatonConfig {
 
-protected[levenshteinautomaton]
-case class AutomatonConfigWithWithEncParametricDescr(word: String,
-                                                    degree: Int,
-                                                    encodedParametricDscr: EncodedParametricDscr)
-  extends AutomatonConfig
+  /**
+    * Automaton recognizes the set of all words
+    * where the Levenshtein-distance between a word from the set
+    * and a word automaton is built for does not exceed `degree`.
+    */
+  val degree = encodedParametricDescription.getAutomatonDegree
 
-
-protected[levenshteinautomaton]
-object AutomatonConfig {
-  def apply(word: String, automatonDegree: Int, inclTranspositions: Boolean) =
-    Option(EncodedParametricDscr.get(automatonDegree, inclTranspositions)) match {
-      case Some(parametricDescription) =>
-        AutomatonConfigWithWithEncParametricDescr(word, automatonDegree, parametricDescription)
-      case None => DefaultAutomatonConfig(word, automatonDegree, inclTranspositions)
-    }
+  /**
+    * Include transposition as a primitive edit operation.
+    */
+  val inclTransposition = encodedParametricDescription.isInclTransposition
 }

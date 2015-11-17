@@ -1,68 +1,131 @@
 package io.itdraft.levenshteinautomaton.description.nonparametric
 
+/**
+  * This class represents an image set of positions in the form of
+  * a binary search tree.
+  */
 protected[levenshteinautomaton] sealed trait ImageSet {
+
   /**
-   * Returns a new `ImageSet` which does not contain any position that is subsumed
-   * by any element of the image set. A `position` is included in the image set
-   * in case it does not already exist and does not subsumed by any position in the
-   * image set. Result set does not contain any element subsumes by a `position`.
-   */
+    * Returns a new `ImageSet` which does not contain any position that is subsumed
+    * by any position of the image set. A `position` is included in the image set
+    * in case it does not already exist and does not subsumed by any position in the
+    * image set. Result set does not contain any element subsumes by a `position`.
+    *
+    * @return a new `ImageSet` consisting of positions where every position is not
+    *         subsumed by any other position.
+    */
   def reducedAdd(position: Position): ImageSet
 
   /**
-   * Returns a new `ImageSet` which does not contain any position that is subsumed
-   * by any element of the image set. A `position` is included in the image set
-   * in case it does not already exist and does not subsumed by any position in the
-   * image set. Result set does not contain any element subsumes by a `position`.
-   */
+    * Returns a new `ImageSet` which does not contain any position that is subsumed
+    * by any position of the image set. A `position` is included in the image set
+    * in case it does not already exist and does not subsumed by any position in the
+    * image set. Result set does not contain any element subsumes by a `position`.
+    *
+    * @return a new `ImageSet` consisting of positions where every position is not
+    *         subsumed by any other position.
+    */
   def +~:(position: Position) = reducedAdd(position)
 
   /**
-   * Tests if the `position` subsumed by any element in this `ImageSet`.
-   */
+    * Tests if the `position` is subsumed by any position within this `ImageSet`.
+    */
   def subsumes(position: Position): Boolean
 
   /**
-   * Tests if the `position` exists in this `ImageSet`
-   */
+    * Tests if the `position` exists within this `ImageSet`
+    */
   def contains(position: Position): Boolean
 
   /**
-   * Tests if the `position` exists or subsumed by any element in this `ImageSet`.
-   */
+    * Tests if the `position` exists or subsumed by any element within this `ImageSet`.
+    */
   def reducedContains(position: Position) = contains(position) || subsumes(position)
 
   /**
-   * Returns minimal boundary among positions image set includes.
-   */
+    * Returns minimal boundary among positions within this `ImageSet`.
+    */
   def minBoundary: Int
 
+  /**
+    * Returns whether there exists a position within this `ImageSet`
+    * that satisfies `p`.
+    */
   def exists(p: Position => Boolean): Boolean
 
+  /**
+    * Tests whether this `ImageSet` contains any `Position`.
+    */
   def isEmpty: Boolean
 
+  /**
+    * This method takes a function and applies it to every position in the `ImageSet`.
+    */
   def foreach(f: Position => Unit): Unit
 
-  def fold[B](z: B)(f: (B, Position) => B): B = {
+  /**
+    * Folds the positions of this `ImageSet` using the specified associative binary operator.
+    * The order in which operations are performed on positions is unspecified and may be
+    * nondeterministic.
+    *
+    * @param op a binary operator than must be associative.
+    * @param z a neutral element for the fold operation.
+    * @tparam B a type parameter for the binary operator.
+    * @return the result of applying fold operator `op` between all
+    *         the positions and `z`.
+    */
+  def fold[B](z: B)(op: (B, Position) => B): B = {
     var acc = z
     foreach { position =>
-      acc = f(acc, position)
+      acc = op(acc, position)
     }
     acc
   }
 
+  /**
+    * The size of this `ImageSet`.
+    *
+    * @return the number of positions in this `ImageSet`.
+    */
   def size: Int
 
-  protected[nonparametric] def accumulate(accumulator: ImageSet)(f: Position => Boolean): ImageSet
+  /**
+    * Selects all positions of this `ImageSet` which satisfy a predicate and
+    * adds them to the `accumulator`.
+    *
+    * @param accumulator an image set to add selected positions to.
+    * @param p a predicate used to test positions.
+    * @return a new `ImageSet` consisting of positions from `accumulator`
+    *         and positions from this `ImageSet` which satisfy `p`.
+    */
+  protected[nonparametric] def accumulate(accumulator: ImageSet)(p: Position => Boolean): ImageSet
 
+  /**
+    * Returns a copy of this `ImageSet` with a `position` added
+    * if it's not already within.
+    *
+    * @param position a position to add.
+    * @return a new `ImageSet` containing `position`.
+    */
   protected[nonparametric] def add(position: Position): ImageSet
 
+  /**
+    * Returns a copy of this `ImageSet` with a `position` added
+    * if it's not already within.
+    *
+    * @param position a position to add.
+    * @return a new `ImageSet` containing `position`.
+    */
   protected[nonparametric] def +(position: Position) = add(position)
 }
 
-
+/**
+  * A class to represent the empty image set of positions.
+  */
 protected[levenshteinautomaton] object EmptyImageSet extends ImageSet {
-  def reducedAdd(position: Position):ImageSet = add(position)
+
+  def reducedAdd(position: Position): ImageSet = add(position)
 
   def subsumes(position: Position) = false
 
@@ -78,7 +141,8 @@ protected[levenshteinautomaton] object EmptyImageSet extends ImageSet {
 
   val size = 0
 
-  protected[nonparametric] def accumulate(accumulator: ImageSet)(f: Position => Boolean) = accumulator
+  protected[nonparametric]
+  def accumulate(accumulator: ImageSet)(f: Position => Boolean) = accumulator
 
   protected[nonparametric] def add(position: Position) =
     new NonEmptyImageSet(position, EmptyImageSet, EmptyImageSet)

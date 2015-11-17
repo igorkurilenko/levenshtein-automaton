@@ -39,7 +39,7 @@ class ElementaryTransitionSpec extends Specification with Tables {
   }
 
   implicit def conversionToState(stateFormat: List[(Int, Int)])
-                                (implicit c: DefaultAutomatonConfig): NonParametricState =
+                                (implicit c: DefaultAutomatonConfig): NonparametricState =
     stateFormat match {
       case Nil => FailureState
       case ps => State(ps.map(t => t._1 ^# t._2): _*)

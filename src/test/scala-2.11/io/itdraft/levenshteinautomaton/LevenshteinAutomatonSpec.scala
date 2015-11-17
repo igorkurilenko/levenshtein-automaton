@@ -1,10 +1,9 @@
 package io.itdraft.levenshteinautomaton
 
-import io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDscr
+import io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDescription
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.Specification
 import org.specs2.specification.Tables
-
 
 class LevenshteinAutomatonSpec extends Specification with Tables {
 
@@ -76,12 +75,12 @@ class LevenshteinAutomatonSpec extends Specification with Tables {
   object Automaton {
     def apply(correct: String, degree: Int, inclTranspositions: Boolean,
               useParametricDescription: Boolean): LevenshteinAutomaton = {
-      val automatonCharacteristic =
-        if (useParametricDescription) AutomatonConfigWithWithEncParametricDescr(
-          correct, degree, Option(EncodedParametricDscr.get(degree, inclTranspositions)).get)
+      val automatonConfig =
+        if (useParametricDescription) AutomatonConfigWithWithEncodedParametricDescription(
+          correct, Option(EncodedParametricDescription.get(degree, inclTranspositions)).get)
         else DefaultAutomatonConfig(correct, degree, inclTranspositions)
 
-      LevenshteinAutomaton(automatonCharacteristic)
+      LevenshteinAutomaton(automatonConfig)
     }
   }
 

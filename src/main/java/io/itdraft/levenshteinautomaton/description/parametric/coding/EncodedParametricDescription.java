@@ -5,20 +5,20 @@ import io.itdraft.levenshteinautomaton.description.parametric.coding.util.UIntPa
 import java.util.HashMap;
 import java.util.Map;
 
-public class EncodedParametricDscr {
-    private static final Map<Integer, EncodedParametricDscr> STANDARD_BY_DEGREE =
+public class EncodedParametricDescription {
+    private static final Map<Integer, EncodedParametricDescription> STANDARD_BY_DEGREE =
             new HashMap<>();
-    private static final Map<Integer, EncodedParametricDscr> INCL_TRANSPOSITIONS_BY_DEGREE =
+    private static final Map<Integer, EncodedParametricDescription> INCL_TRANSPOSITIONS_BY_DEGREE =
             new HashMap<>();
 
     static {
-        STANDARD_BY_DEGREE.put(1, new EncodedParametricDscr(5,
+        STANDARD_BY_DEGREE.put(1, new EncodedParametricDescription(1, false, 5,
                 new UIntPackedArray(3, new long[]{0xbb6d56922db55b69L, 0x6ab6d45220924526L, 0x848249051ae93593L, 0x11a20a444L}),
                 new UIntPackedArray(2, new long[]{0x5554a00001500000L, 0x55557a0283c00015L, 0x155555L}),
                 new int[]{0, 1, 0, -1, -1}
         ));
 
-        STANDARD_BY_DEGREE.put(2, new EncodedParametricDscr(30,
+        STANDARD_BY_DEGREE.put(2, new EncodedParametricDescription(2, false, 30,
                 new UIntPackedArray(5, new long[]{0xef7bdef7bdef78a1L, 0xdef7bdef7bdef7bdL, 0xbdef7bc630bdef7bL, 0x7bdef7bdef7bdef7L, 0xf0420f7bdef7bdefL,
                         0xef7bdef7bdef14beL, 0xdef7bdef7bdef7bdL, 0xbc6f17def78e730bL, 0x7bdef7bdef7bde3fL, 0x297de420e3f7bdefL, 0xef7bdef78fef1fc5L,
                         0x21083def7bdef7bdL, 0xbde0fbc1f18a52f8L, 0x7bdef7bdef7bde2fL, 0xf07c6318be10820fL, 0xef7bdef78bef783eL, 0xdef1d2730bdef7bdL,
@@ -63,13 +63,13 @@ public class EncodedParametricDscr {
                         -1, -2, -2, -2, -2, -2, -2, -2, -1, -2}
         ));
 
-        INCL_TRANSPOSITIONS_BY_DEGREE.put(1, new EncodedParametricDscr(6,
+        INCL_TRANSPOSITIONS_BY_DEGREE.put(1, new EncodedParametricDescription(1, true, 6,
                 new UIntPackedArray(3, new long[]{0x6cb6c48db6cb6db1L, 0x8a488251231273dbL, 0x473c49cc93b2db6cL, 0x829222d84825120aL, 0x2c88L}),
                 new UIntPackedArray(2, new long[]{0x52a0000015000000L, 0xa02a0fc000055555L, 0x555555555555eL}),
                 new int[]{0, 1, 0, -1, -1, -1}
         ));
 
-        INCL_TRANSPOSITIONS_BY_DEGREE.put(2, new EncodedParametricDscr(42,
+        INCL_TRANSPOSITIONS_BY_DEGREE.put(2, new EncodedParametricDescription(2, true, 42,
                 new UIntPackedArray(6, new long[]{0xaaaaaaaaaaaaa141L, 0xaaaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaaaaaaL, 0x2aaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaa8618L,
                         0xaaaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaaaaaaL, 0x40aaaaaaaaaaaaaaL, 0xaaaaaaa8516aa810L, 0xaaaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaaaaaaL,
                         0x182aaaaaaaaaaaaaL, 0xa1aa16aaaaaaa208L, 0xaaaaaaaaaaaaaaaaL, 0x22aaaaaaaaaaaaaaL, 0x91c3aaaaaaaaa22aL, 0xaa1ea145145aaa24L,
@@ -136,33 +136,47 @@ public class EncodedParametricDscr {
         ));
     }
 
-    public static EncodedParametricDscr get(int degree, boolean inclTranspositions) {
+    public static EncodedParametricDescription get(int degree, boolean inclTranspositions) {
         return inclTranspositions ?
-                EncodedParametricDscr.getInclTranspositions(degree) :
-                EncodedParametricDscr.getStandard(degree);
+                EncodedParametricDescription.getInclTranspositions(degree) :
+                EncodedParametricDescription.getStandard(degree);
     }
 
-    public static EncodedParametricDscr getStandard(int automatonDegree) {
+    public static EncodedParametricDescription getStandard(int automatonDegree) {
         return STANDARD_BY_DEGREE.get(automatonDegree);
     }
 
-    public static EncodedParametricDscr getInclTranspositions(int automatonDegree) {
+    public static EncodedParametricDescription getInclTranspositions(int automatonDegree) {
         return INCL_TRANSPOSITIONS_BY_DEGREE.get(automatonDegree);
     }
 
+    private final int automatonDegree;
+    private final boolean inclTransposition;
     private int statesCount;
     private UIntPackedArray transitions;
     private UIntPackedArray boundaryOffsets;
     private int[] degreeMinusStateLength;
 
-    public EncodedParametricDscr(int statesCount,
-                                 UIntPackedArray transitions,
-                                 UIntPackedArray boundaryOffsets,
-                                 int[] degreeMinusStateLength) {
+    public EncodedParametricDescription(int automatonDegree,
+                                        boolean inclTransposition,
+                                        int statesCount,
+                                        UIntPackedArray transitions,
+                                        UIntPackedArray boundaryOffsets,
+                                        int[] degreeMinusStateLength) {
+        this.automatonDegree = automatonDegree;
+        this.inclTransposition = inclTransposition;
         this.statesCount = statesCount;
         this.transitions = transitions;
         this.boundaryOffsets = boundaryOffsets;
         this.degreeMinusStateLength = degreeMinusStateLength;
+    }
+
+    public int getAutomatonDegree() {
+        return automatonDegree;
+    }
+
+    public boolean isInclTransposition() {
+        return inclTransposition;
     }
 
     public int getStatesCount() {

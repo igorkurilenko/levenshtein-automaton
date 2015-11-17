@@ -7,7 +7,7 @@ public class ParametricStateCodec {
     public static final int INITIAL_STATE = 0;
 
     public static int transit(int xCodePoint, int state, int w, int n,
-                              String word, EncodedParametricDscr parametricDescription) {
+                              String word, EncodedParametricDescription parametricDescription) {
         int statesCount = parametricDescription.getStatesCount();
 
         if (isFailure(state, statesCount)) return state;
@@ -33,7 +33,7 @@ public class ParametricStateCodec {
     }
 
     public static boolean isFinal(int state, int w, int n,
-                                  EncodedParametricDscr parametricDescription) {
+                                  EncodedParametricDescription parametricDescription) {
         int statesCount = parametricDescription.getStatesCount();
         boolean isFailure = isFailure(state, statesCount);
 
