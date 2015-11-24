@@ -1,8 +1,22 @@
 package io.itdraft.levenshteinautomaton.description
 
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import io.itdraft.levenshteinautomaton.description.nonparametric._
 import io.itdraft.levenshteinautomaton.description.parametric.ParametricState
-import io.itdraft.levenshteinautomaton.{AutomatonConfig, AutomatonConfigWithWithEncodedParametricDescription, DefaultAutomatonConfig}
+import io.itdraft.levenshteinautomaton.{AutomatonConfig, AutomatonConfigWithEncodedParametricDescription, DefaultAutomatonConfig}
 
 /**
   * A class to represent the Levenshtein-automaton state.
@@ -43,7 +57,7 @@ object State {
   protected[levenshteinautomaton]
   def initial()(implicit ch: AutomatonConfig): State = ch match {
     case c: DefaultAutomatonConfig => initial(c)
-    case c: AutomatonConfigWithWithEncodedParametricDescription => initial(c)
+    case c: AutomatonConfigWithEncodedParametricDescription => initial(c)
   }
 
   protected[levenshteinautomaton]
@@ -53,7 +67,7 @@ object State {
   }
 
   protected[levenshteinautomaton]
-  def initial(ch: AutomatonConfigWithWithEncodedParametricDescription) =
+  def initial(ch: AutomatonConfigWithEncodedParametricDescription) =
     new ParametricState(0, ch)
 
   protected[levenshteinautomaton]
@@ -67,6 +81,6 @@ object State {
 
   protected[levenshteinautomaton]
   def apply(encodedState: Int, statesCount: Int)
-           (implicit c: AutomatonConfigWithWithEncodedParametricDescription): ParametricState =
+           (implicit c: AutomatonConfigWithEncodedParametricDescription): ParametricState =
     new ParametricState(encodedState, c)
 }
