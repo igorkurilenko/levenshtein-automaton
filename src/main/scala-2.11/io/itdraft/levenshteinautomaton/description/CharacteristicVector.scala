@@ -25,8 +25,8 @@ protected[levenshteinautomaton] trait CharacteristicVector {
     * `j&#8712;{1, ..., k}` is the minimal index in the characteristic vector
     * `&lt;b<sub>1</sub>, ..., b<sub>k</sub>&gt;` where `b<sub>j</sub> = 1`.
     *
-    * @return Minimal index `j` where `b<sub>j</sub>=1` in the characteristic vector or
-    *         -1 if `b<sub>j</sub>=0` for any `j`.
+    * @return a minimal index `j` where `b<sub>j</sub>=1` in the characteristic
+    *         vector or `-1` if `b<sub>j</sub>=0` for each `j`.
     */
   def j: Int
 
@@ -37,26 +37,18 @@ protected[levenshteinautomaton] trait CharacteristicVector {
 }
 
 /**
-  * A class to represent the default implementation of `CharacteristicVector`.
-  * @param v Characteristic vector as list of booleans.
+  * This class is the default implementation of `CharacteristicVector` where
+  * the characteristic vector is represented as a sequence of boolean values.
   */
 protected[levenshteinautomaton]
 case class DefaultCharacteristicVector(private val v: Seq[Boolean])
   extends CharacteristicVector {
 
-  /**
-    * Minimal index `j&#8712;{1, ..., k}` where `b<sub>j</sub>=1` in
-    * the characteristic vector `&lt;b<sub>1</sub>, ..., b<sub>k</sub>&gt;`
-    * or -1 if `b<sub>j</sub>=0` for any `j`.
-    */
   lazy val j = v.indexOf(true) match {
     case -1 => -1
     case i => i + 1
   }
 
-  /**
-    * Size of the characteristic vector.
-    */
   lazy val size = v.size
 }
 
@@ -71,34 +63,38 @@ protected[levenshteinautomaton] object DefaultCharacteristicVector {
 
   /**
     * Creates the characteristic vector `&lt;b<sub>i</sub>, ..., b<sub>k</sub>&gt;`
-    * of a symbol specified by `codePoint` with respect to `word` where `i = from` and
+    * of a symbol specified by a code point with respect to `word` where `i = from` and
     * `k` is the maximal boundary of `word`. If the specified interval is invalid then
     * an empty vector will be returned (no exceptions are thrown).
     *
-    * @param symbolCodePoint A symbol's code point the characteristic vector
+    * @param symbolCodePoint a symbol's code point the characteristic vector
     *                        is being built for.
-    * @param word A word the characteristic vector is being built for.
-    * @param from Minimal boundary of `word` to start building the characteristic vector.
-    * @return An instance of `DefaultCharacteristicVector`.
+    * @param word a word the characteristic vector is being built for.
+    * @param from the minimal boundary of `word` to start building the characteristic vector.
+    *
+    * @return an instance of `DefaultCharacteristicVector` for the `word`'s range from `from`
+    *         up to the end of `word`.
     */
   def apply(symbolCodePoint: Int, word: String,
             from: Int): DefaultCharacteristicVector =
-    apply(symbolCodePoint, word, from, word.codePointsCount)
+    apply(symbolCodePoint, word, from, codePointCount(word))
 
   /**
     * Creates the characteristic vector `&lt;b<sub>i</sub>, ..., b<sub>k</sub>&gt;`
-    * of a symbol specified by `symbolCodePoint` with respect to `word` where `i = from` and
+    * of a symbol specified by a code point with respect to `word` where `i = from` and
     * `k = until - 1`. If the specified interval is invalid then an empty vector will be
     * returned (no exceptions are thrown).
     *
-    * @param symbolCodePoint A symbol's code point the characteristic
+    * @param symbolCodePoint a symbol's code point the characteristic
     *                        vector is being built for.
-    * @param word A word the characteristic vector is being built for.
-    * @param from Minimal boundary of `word` to start building the
+    * @param word a word the characteristic vector is being built for.
+    * @param from minimal boundary of `word` to start building the
     *             characteristic vector.
-    * @param until Maximal boundary until which the characteristic
+    * @param until maximal boundary until which the characteristic
     *              vector is being built for.
-    * @return An instance of `DefaultCharacteristicVector`.
+    *
+    * @return an instance of `DefaultCharacteristicVector` for the `word`'s range from `from`
+    *         up to (but not including) `until`.
     */
   def apply(symbolCodePoint: Int, word: String,
             from: Int, until: Int): DefaultCharacteristicVector = {

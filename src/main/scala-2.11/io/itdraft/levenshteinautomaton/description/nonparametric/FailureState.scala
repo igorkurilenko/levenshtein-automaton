@@ -17,62 +17,60 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
 import io.itdraft.levenshteinautomaton.description._
 
 /**
-  * A class to represent the nonparametric failure state.
+  * A class to represent the failure state of the Levenshtein-automaton.
   */
 protected[levenshteinautomaton] object FailureState extends NonparametricState {
 
   /**
-    * Tests if it's a failure state or not. Always `true` for `FailureState`.
+    * Tests if it's a failure state or not. Returns `true`.
     */
   val isFailure = true
 
   /**
-    *Tests if it's a final state or not. Always `false` for `FailureState`.
+    * Tests if it's a final state or not. Returns `false`.
     */
   val isFinal = false
 
-  /**
-    * The max relevant subword length of `FailureState` is 0.
-    */
-  override lazy val relevantSubwordMaxLength = 0
+  val relevantSubwordMaxLength = 0
+
+  val imageSet = EmptyImageSet
 
   /**
-    * The `FailureState` image set is `EmptyImageSet`.
-    */
-  override val imageSet = EmptyImageSet
-
-  /**
-    * The reduced union of two states is a union of this states with omission
-    * of states that are subsumed by other states.
+    * @inheritdoc
     *
-    * @param other `NonparametricState` to execute reduced union with.
-    * @return The reduced union of `FailureState` always returns `other`.
+    * @param other a `NonparametricState` to perform reduced union with.
+    *
+    * @return `other`.
     */
   def reducedUnion(other: NonparametricState): NonparametricState = other
 
   /**
-    * Returns a new `State` produced by elementary transitions of this `State`'s positions.
-    * `FailureState` can transit to `FailureState` only.
+    * @inheritdoc
     *
-    * @param symbolCodePoint Symbol's code point.
+    * @param symbolCodePoint the symbol's from the alphabet code point.
+    *
+    * @return an instance of `FailureState`.
     */
   def transit(symbolCodePoint: Int) = this
 
   /**
     * The equality method for `FailureState`.
+    *
+    * @param that the other object to compare with.
+    * @return `true` if other object is `FailureState` else `false`.
     */
-  override def equals(obj: scala.Any): Boolean = obj match {
+  override def equals(that: scala.Any): Boolean = that match {
     case other: State => other.isFailure
     case _ => false
   }
 
   /**
-    * The hash code for `FailureState`.
+    * The hash code for `FailureState` is `0`.
     */
   override val hashCode = 0
 
   /**
-    * Creates a `String` representation of this object.
+    * `String` representation of `FailureState` is `Ø`.
     */
   override val toString = "\u00D8"
 }

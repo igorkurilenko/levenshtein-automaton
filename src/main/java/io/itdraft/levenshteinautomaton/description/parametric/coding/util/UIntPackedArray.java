@@ -4,6 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.LongFunction;
 
+/**
+ *
+ */
 public class UIntPackedArray {
 
     private final static long[] MASKS = new long[]{
@@ -23,7 +26,6 @@ public class UIntPackedArray {
             0x1fffffffffffffL, 0x3fffffffffffffL, 0x7fffffffffffffL, 0xffffffffffffffL,
             0x1ffffffffffffffL, 0x3ffffffffffffffL, 0x7ffffffffffffffL, 0xfffffffffffffffL,
             0x1fffffffffffffffL, 0x3fffffffffffffffL, 0x7fffffffffffffffL};
-    public static final long[] EMPTY = new long[]{};
 
     private final long[] packed;
     private final int bitsPerValue;

@@ -16,6 +16,10 @@ package io.itdraft.levenshteinautomaton.description.parametric.coding;
 
 import static java.lang.Integer.numberOfLeadingZeros;
 
+/**
+ * This util class computes a characteristic vector and
+ * encodes it as an integer value.
+ */
 public final class CharacteristicVectorCodec {
 
     public static final int MAX_ALLOWED_SIZE = Integer.SIZE - 1;
@@ -29,9 +33,32 @@ public final class CharacteristicVectorCodec {
     // and the latter 10000101 in binary (21 and 133 in decimal).
     public static final int EMPTY = 0x01;
 
-    public static int createEncoded(final int xCodePoint, final String word,
-                                    final int from, final int until) {
-        assert (until - from <= MAX_ALLOWED_SIZE);
+    /**
+     * Creates the characteristic vector <code>&lt;b<sub>i</sub>, ..., b<sub>k</sub>&gt;</code>
+     * of a symbol specified by a code point with respect to {@code word} where {@code i = from} and
+     * {@code k = until - 1}. If the specified interval is invalid then an empty vector will be
+     * returned (no exceptions are thrown).
+     * <p>
+     * <p>
+     * <b>Note:</b><br/>
+     * If {@code until - from} exceeds
+     * <code>{@link CharacteristicVectorCodec#MAX_ALLOWED_SIZE} + 1</code>
+     * then invalid characteristic vector will be returned.
+     * </p>
+     *
+     * @param symbolCodePoint a symbol's code point the characteristic
+     *                        vector is being built for.
+     * @param word            a word the characteristic vector is being built for.
+     * @param from            minimal boundary of {@code word} to start building the
+     *                        characteristic vector.
+     * @param until           maximal boundary until which the characteristic
+     *                        vector is being built for.
+     * @return an encoded characteristic vector as integer value of the {@code word}'s
+     * range from {@code from} up to (but not including) {@code until}.
+     */
+    public static int createEncodedCharacteristicVector(final int symbolCodePoint, final String word,
+                                                        final int from, final int until) {
+        assert (until - from <= MAX_ALLOWED_SIZE + 1);
 
         int r = 0, i = 0, curCodePoint = 0;
         int vector = EMPTY;
@@ -41,7 +68,7 @@ public final class CharacteristicVectorCodec {
 
             if (from <= r && r < until) {
                 vector <<= 1;
-                if (curCodePoint == xCodePoint) vector |= 1;
+                if (curCodePoint == symbolCodePoint) vector |= 1;
             }
 
             i += Character.charCount(curCodePoint);
@@ -55,8 +82,8 @@ public final class CharacteristicVectorCodec {
      * <code>j&#8712;{1, ..., k}</code> is the minimal index in the characteristic vector
      * <code>&lt;b<sub>1</sub>, ..., b<sub>k</sub>&gt;</code> where <code>b<sub>j</sub> = 1</code>.
      *
-     * @return Minimal index <code>j</code> where <code>b<sub>j</sub>=1</code> in the characteristic
-     * vector or <code>-1</code> if <code>b<sub>j</sub>=0</code> for any <code>j</code>.
+     * @return Minimal index {@code j} where <code>b<sub>j</sub>=1</code> in the characteristic
+     * vector or {@code  -1} if <code>b<sub>j</sub>=0</code> for each {@code j}.
      */
     public static int decodeJ(int encodedVector) {
         int result = -1;
@@ -69,19 +96,22 @@ public final class CharacteristicVectorCodec {
     }
 
     /**
-     * Returns a size of the characteristic vector <code>v</code>.
+     * Returns a size of the characteristic vector.
+     *
+     * @param encodedVector an encoded characteristic vector.
+     * @return number of elements in the characteristic vector.
      */
-    public static int size(int v) {
-        return Integer.SIZE - numberOfLeadingZeros(v) - 1;
+    public static int size(int encodedVector) {
+        return Integer.SIZE - numberOfLeadingZeros(encodedVector) - 1;
     }
 
     /**
      * Returns a position of the first one-bit or -1 if there are zero-bits only in a
      * relevant subword characteristic vector. Position numbering starts with 0.
      */
-    private static int positionOfFirstNonZero(int v) {
-        int boundaryPosition = numberOfLeadingZeros(v);
-        int vWithoutBoundary = v ^ (1 << Integer.MAX_VALUE - boundaryPosition);
+    private static int positionOfFirstNonZero(int encodedVector) {
+        int boundaryPosition = numberOfLeadingZeros(encodedVector);
+        int vWithoutBoundary = encodedVector ^ (1 << Integer.MAX_VALUE - boundaryPosition);
         int result = -1;
 
         if (vWithoutBoundary != 0) {

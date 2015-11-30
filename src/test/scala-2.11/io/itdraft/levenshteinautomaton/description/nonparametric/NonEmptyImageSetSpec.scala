@@ -14,11 +14,12 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
 import org.specs2.mutable.Specification
 
 class NonEmptyImageSetSpec extends Specification {
-  implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
+  import io.itdraft.levenshteinautomaton._
+
+  implicit val _ = createLevenshteinAutomatonConfig("10101010", degree = 5)
 
   "The {0^#1, 1^#1, 3^#2} image set" should {
     val imageSet = ImageSet(0 ^# 1, 1 ^# 1, 3 ^# 2)
@@ -39,10 +40,6 @@ class NonEmptyImageSetSpec extends Specification {
 
     "not subsume 1^#0" in {
       imageSet.subsumes(1 ^# 0) must beFalse
-    }
-
-    "have a min boundary equal to 0" in {
-      imageSet.minBoundary must be equalTo 0
     }
 
     "contain 3^#2" in {
@@ -101,10 +98,6 @@ class NonEmptyImageSetSpec extends Specification {
 
   "The {7^#5, 8^#5} image set" should {
     val imageSet = ImageSet(7 ^# 5, 8 ^# 5)
-
-    "have a min boundary equal to 7" in {
-      imageSet.minBoundary must be equalTo 7
-    }
 
     "have a size equal to 2" in {
       imageSet.size must be equalTo 2

@@ -15,7 +15,7 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
  */
 
 /**
-  * This class represents an image set of positions in the form of
+  * This class represents an image set of state's positions in the form of
   * a binary search tree.
   */
 protected[levenshteinautomaton] sealed trait ImageSet {
@@ -24,7 +24,9 @@ protected[levenshteinautomaton] sealed trait ImageSet {
     * Returns a new `ImageSet` which does not contain any position that is subsumed
     * by any position of the image set. A `position` is included in the image set
     * in case it does not already exist and does not subsumed by any position in the
-    * image set. Result set does not contain any element subsumes by a `position`.
+    * image set. Result set does not contain any element subsumes by `position`.
+    *
+    * @param position a position to add to image set.
     *
     * @return a new `ImageSet` consisting of positions where every position is not
     *         subsumed by any other position.
@@ -35,7 +37,9 @@ protected[levenshteinautomaton] sealed trait ImageSet {
     * Returns a new `ImageSet` which does not contain any position that is subsumed
     * by any position of the image set. A `position` is included in the image set
     * in case it does not already exist and does not subsumed by any position in the
-    * image set. Result set does not contain any element subsumes by a `position`.
+    * image set. Result set does not contain any position subsumes by `position`.
+    *
+    * @param position a position to add to image set.
     *
     * @return a new `ImageSet` consisting of positions where every position is not
     *         subsumed by any other position.
@@ -43,28 +47,23 @@ protected[levenshteinautomaton] sealed trait ImageSet {
   def +~:(position: Position) = reducedAdd(position)
 
   /**
-    * Tests if the `position` is subsumed by any position within this `ImageSet`.
+    * Tests if `position` is subsumed by any position within this `ImageSet`.
     */
   def subsumes(position: Position): Boolean
 
   /**
-    * Tests if the `position` exists within this `ImageSet`
+    * Tests if `position` exists within this `ImageSet`
     */
   def contains(position: Position): Boolean
 
   /**
-    * Tests if the `position` exists or subsumed by any element within this `ImageSet`.
+    * Tests if `position` exists or subsumed by any element within this `ImageSet`.
     */
   def reducedContains(position: Position) = contains(position) || subsumes(position)
 
   /**
-    * Returns minimal boundary among positions within this `ImageSet`.
-    */
-  def minBoundary: Int
-
-  /**
     * Returns whether there exists a position within this `ImageSet`
-    * that satisfies `p`.
+    * that satisfies a predicate `p`.
     */
   def exists(p: Position => Boolean): Boolean
 
@@ -74,7 +73,7 @@ protected[levenshteinautomaton] sealed trait ImageSet {
   def isEmpty: Boolean
 
   /**
-    * This method takes a function and applies it to every position in the `ImageSet`.
+    * This method applies `f` to every position in this `ImageSet`.
     */
   def foreach(f: Position => Unit): Unit
 
@@ -86,8 +85,9 @@ protected[levenshteinautomaton] sealed trait ImageSet {
     * @param op a binary operator than must be associative.
     * @param z a neutral element for the fold operation.
     * @tparam B a type parameter for the binary operator.
-    * @return the result of applying fold operator `op` between all
-    *         the positions and `z`.
+    *
+    * @return the result of applying fold operator `op` between
+    *         all positions and `z`.
     */
   def fold[B](z: B)(op: (B, Position) => B): B = {
     var acc = z
@@ -98,44 +98,77 @@ protected[levenshteinautomaton] sealed trait ImageSet {
   }
 
   /**
-    * The size of this `ImageSet`.
-    *
-    * @return the number of positions in this `ImageSet`.
+    * Returns the number of positions in this `ImageSet`.
     */
   def size: Int
 
   /**
-    * Selects all positions of this `ImageSet` which satisfy a predicate and
+    * Selects all positions of this `ImageSet` which satisfy a predicate `p` and
     * adds them to the `accumulator`.
     *
     * @param accumulator an image set to add selected positions to.
     * @param p a predicate used to test positions.
-    * @return a new `ImageSet` consisting of positions from `accumulator`
+    *
+    * @return a new `ImageSet` consisting of all positions from `accumulator`
     *         and positions from this `ImageSet` which satisfy `p`.
     */
   protected[nonparametric] def accumulate(accumulator: ImageSet)(p: Position => Boolean): ImageSet
 
   /**
     * Returns a copy of this `ImageSet` with a `position` added
-    * if it's not already within.
+    * if it isn't already within.
     *
     * @param position a position to add.
+    *
     * @return a new `ImageSet` containing `position`.
     */
   protected[nonparametric] def add(position: Position): ImageSet
 
   /**
     * Returns a copy of this `ImageSet` with a `position` added
-    * if it's not already within.
+    * if it isn't already within.
     *
     * @param position a position to add.
+    *
     * @return a new `ImageSet` containing `position`.
     */
   protected[nonparametric] def +(position: Position) = add(position)
+
+  /**
+    * Compares this `ImageSet` with another object for equality.
+    *
+    * @param that the other object.
+    *
+    * @return `true` if `that` is `ImageSet` which contains the same
+    *         elements as this `ImageSet` or if both are empty.
+    */
+  override def equals(that: scala.Any): Boolean = that match {
+    case other: ImageSet =>
+      var result = isEmpty == other.isEmpty
+      if (result) foreach(result &= other.contains(_))
+      if (result) other.foreach(result &= contains(_))
+      result
+    case _ => false
+  }
+
+  /**
+    * String representation of this `ImageSet`.
+    */
+  override def toString = {
+    var sb = new StringBuilder
+
+    sb ++= "{ "
+    foreach {
+      sb ++= _.toString += ' '
+    }
+    sb += '}'
+
+    sb.toString()
+  }
 }
 
 /**
-  * A class to represent the empty image set of positions.
+  * A singleton class to represent the empty image set of state's positions.
   */
 protected[levenshteinautomaton] object EmptyImageSet extends ImageSet {
 
@@ -143,8 +176,9 @@ protected[levenshteinautomaton] object EmptyImageSet extends ImageSet {
 
   def subsumes(position: Position) = false
 
-  def minBoundary: Int = throw new NoSuchElementException
-
+  /**
+    * Tests if it's an empty image set. Always `true` for `EmptyImageSet`.
+    */
   val isEmpty = true
 
   def foreach(f: (Position) => Unit) = ()
@@ -153,6 +187,9 @@ protected[levenshteinautomaton] object EmptyImageSet extends ImageSet {
 
   def exists(p: (Position) => Boolean) = false
 
+  /**
+    * The number of positions in image set. Always `0` for `EmptyImageSet`.
+    */
   val size = 0
 
   protected[nonparametric]
@@ -161,19 +198,15 @@ protected[levenshteinautomaton] object EmptyImageSet extends ImageSet {
   protected[nonparametric] def add(position: Position) =
     new NonEmptyImageSet(position, EmptyImageSet, EmptyImageSet)
 
-  override def equals(obj: scala.Any): Boolean = obj match {
-    case other: ImageSet => other.isEmpty
-    case _ => false
-  }
-
   override lazy val hashCode = 0
-
-  override def toString = "{}"
 }
 
-
+/**
+  * An immutable class to represent a nonempty image set of state's positions.
+  */
 protected[levenshteinautomaton]
 class NonEmptyImageSet(element: Position, left: ImageSet, right: ImageSet) extends ImageSet {
+
   def reducedAdd(position: Position): ImageSet =
     if (subsumes(position)) this
     else accumulate(ImageSet(position)) {
@@ -194,14 +227,6 @@ class NonEmptyImageSet(element: Position, left: ImageSet, right: ImageSet) exten
   def subsumes(position: Position) =
     element.subsumes(position) || left.subsumes(position) || right.subsumes(position)
 
-  lazy val minBoundary = {
-    var min = Integer.MAX_VALUE
-    foreach { p =>
-      if (p.i < min) min = p.i
-    }
-    min
-  }
-
   def contains(position: Position) =
     if (position < element) left.contains(position)
     else if (position > element) right.contains(position)
@@ -209,6 +234,9 @@ class NonEmptyImageSet(element: Position, left: ImageSet, right: ImageSet) exten
 
   def exists(p: (Position) => Boolean) = p(element) || left.exists(p) || right.exists(p)
 
+  /**
+    * Tests if it's an empty image set or not. Always `false` for `NonEmptyImageSet`.
+    */
   val isEmpty = false
 
   def foreach(f: (Position) => Unit) = {
@@ -217,28 +245,10 @@ class NonEmptyImageSet(element: Position, left: ImageSet, right: ImageSet) exten
     right.foreach(f)
   }
 
+  /**
+    * Returns the number of positions in this `ImageSet`.
+    */
   lazy val size = 1 + left.size + right.size
-
-  override def toString = {
-    var sb = new StringBuilder
-
-    sb ++= "{ "
-    foreach {
-      sb ++= _.toString += ' '
-    }
-    sb += '}'
-
-    sb.toString()
-  }
-
-  override def equals(obj: scala.Any): Boolean = obj match {
-    case other: NonEmptyImageSet =>
-      var result = true
-      foreach(result &= other.contains(_))
-      other.foreach(result &= contains(_))
-      result
-    case _ => false
-  }
 
   override lazy val hashCode = toSet.hashCode()
 
@@ -246,9 +256,12 @@ class NonEmptyImageSet(element: Position, left: ImageSet, right: ImageSet) exten
 }
 
 protected[levenshteinautomaton] object ImageSet {
+
+  /**
+    * The empty image set.
+    */
   def apply() = EmptyImageSet
 
-  def apply(positions: Position*) = {
+  def apply(positions: Position*) =
     positions.foldRight(EmptyImageSet: ImageSet)(_ +~: _).asInstanceOf[NonEmptyImageSet]
-  }
 }

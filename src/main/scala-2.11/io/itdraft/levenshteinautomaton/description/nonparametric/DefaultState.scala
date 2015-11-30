@@ -14,26 +14,24 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
+import io.itdraft.levenshteinautomaton.LevenshteinAutomatonConfig
 import io.itdraft.levenshteinautomaton.description._
 
-protected[levenshteinautomaton]
-class StandardState(val imageSet: ImageSet,
-                    val automatonConfig: DefaultAutomatonConfig)
-  extends NonparametricState {
 
+/**
+  * Represents the state of the nonparametrically described Levenshtein-automaton.
+  */
+protected[levenshteinautomaton]
+class DefaultState(val imageSet: ImageSet,
+                   val automatonConfig: LevenshteinAutomatonConfig) extends NonparametricState {
   assert(!imageSet.isEmpty)
+
+  import io.itdraft.levenshteinautomaton._
 
   private lazy val w = automatonConfig.w
   private lazy val n = automatonConfig.n
 
   private implicit val _ = automatonConfig
-
-  private val elementaryTransition = ElementaryTransition()
-
-  lazy val relevantSubwordMaxLength = Math.min(2 * n + 1, w - minBoundary)
-
-  lazy val minBoundary = imageSet.minBoundary
 
   val isFailure = false
 
@@ -41,18 +39,7 @@ class StandardState(val imageSet: ImageSet,
 
   def reducedUnion(other: NonparametricState): NonparametricState =
     if (other.isFailure) this
-    else State(other.imageSet.fold(imageSet)(_.reducedAdd(_)))
-
-  def transit(x: Int) =
-    imageSet.fold(FailureState: NonparametricState) { (state, position) =>
-      val v = relevantSubwordCharacteristicVector(position, x)
-
-      state |~ elementaryTransition(position, v)
-    }
-
-  private def relevantSubwordCharacteristicVector(position: Position, x: Int) =
-    DefaultCharacteristicVector(x, automatonConfig.word,
-      position.i, position.i + position.relevantSubwordMaxLength)
+    else NonparametricState(other.imageSet.fold(imageSet)(_.reducedAdd(_)))
 
   override def equals(obj: scala.Any): Boolean = obj match {
     case other: NonparametricState if !other.isFailure =>

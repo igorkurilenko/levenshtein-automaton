@@ -14,35 +14,51 @@ package io.itdraft.levenshteinautomaton.description.parametric
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.AutomatonConfigWithEncodedParametricDescription
+import io.itdraft.levenshteinautomaton.LevenshteinAutomatonConfig
 import io.itdraft.levenshteinautomaton.description._
 import io.itdraft.levenshteinautomaton.description.parametric.coding.ParametricStateCodec
 
+/**
+  * Represents the parametric state of the Levenshtein-automaton.
+  *
+  * @note Encapsulates an encoded parametric state.
+  */
 protected[levenshteinautomaton]
-class ParametricState(state: Int,
-                      val automatonConfig: AutomatonConfigWithEncodedParametricDescription)
-  extends State {
+class ParametricState(val asEncodedInteger: Int,
+                      automatonConfig: LevenshteinAutomatonConfig) extends State {
+
+  import io.itdraft.levenshteinautomaton._
 
   private lazy val w = automatonConfig.w
   private lazy val n = automatonConfig.n
 
-  private lazy val parametricDescription = automatonConfig.encodedParametricDescription
-  private lazy val statesCount = parametricDescription.getStatesCount
+  private lazy val parametricDescription = automatonConfig.getParametricDescriptionFactory
+    .getEncodedParametricDescription(n, automatonConfig.inclTransposition)
+  private lazy val statesCount = parametricDescription.getParametricStatesCount
 
-  lazy val relevantSubwordMaxLength = Math.min(2 * n + 1, w - minBoundary)
+  /**
+    * Returns minimal boundary of this `State`.
+    */
+  lazy val minBoundary = ParametricStateCodec.getMinBoundary(asEncodedInteger, statesCount)
 
-  def minBoundary = ParametricStateCodec.getMinBoundary(state, statesCount)
+  /**
+    * Tests if it's a final state or not.
+    */
+  lazy val isFinal = ParametricStateCodec.isFinal(asEncodedInteger, automatonConfig)
 
-  lazy val isFinal = ParametricStateCodec.isFinal(state,
-    w, n, automatonConfig.encodedParametricDescription)
+  /**
+    * Tests if it's a failure state or not.
+    */
+  lazy val isFailure = ParametricStateCodec.isFailure(asEncodedInteger, statesCount)
+}
 
+protected[levenshteinautomaton] object ParametricState {
+  /**
+    * Returns the initial state for the parametrically described Levenshtein-automaton.
+    */
+  def initial(ch: LevenshteinAutomatonConfig) = new ParametricState(0, ch)
 
-  lazy val isFailure = ParametricStateCodec.isFailure(state, statesCount)
-
-  def transit(xCodePoint: Int) = {
-    val nextState = ParametricStateCodec.transit(xCodePoint, state,
-      w, n, automatonConfig.word, parametricDescription)
-
-    new ParametricState(nextState, automatonConfig)
-  }
+  def apply(encodedState: Int)
+           (implicit c: LevenshteinAutomatonConfig): ParametricState =
+    new ParametricState(encodedState, c)
 }

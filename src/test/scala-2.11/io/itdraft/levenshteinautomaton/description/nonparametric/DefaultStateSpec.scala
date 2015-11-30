@@ -18,14 +18,18 @@ import io.itdraft.levenshteinautomaton.description.State
 import org.specs2.mutable.Specification
 import org.specs2.specification.Tables
 
-class StandardStateSpec extends Specification with Tables {
+class DefaultStateSpec extends Specification with Tables {
 
   import io.itdraft.levenshteinautomaton._
   import io.itdraft.levenshteinautomaton.description.nonparametric._
 
   "The {7^#5, 8^#5} state" should {
-    implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
+    implicit val _ = createLevenshteinAutomatonConfig("10101010", degree = 5)
     val state = State(7 ^# 5, 8 ^# 5)
+
+    "have a min boundary equal to 7" in {
+      state.minBoundary must be equalTo 7
+    }
 
     "be not failure if w=8, n=5" in {
       state.isFailure must beFalse
@@ -57,7 +61,7 @@ class StandardStateSpec extends Specification with Tables {
   }
 
   "The {7^#5} state" should {
-    implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
+    implicit val _ = createLevenshteinAutomatonConfig("10101010", degree = 5)
 
     "be not final if w=8, n=5" in {
       State(7 ^# 5).isFinal must beFalse
@@ -65,7 +69,7 @@ class StandardStateSpec extends Specification with Tables {
   }
 
   "Standard state reduced union operation" should {
-    implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
+    implicit val _ = createLevenshteinAutomatonConfig("10101010", degree = 5)
 
     "generate new state with eliminated subsumed positions" in {
       val m = State(0 ^# 0, 1 ^# 0, 2 ^# 0)
@@ -91,7 +95,7 @@ class StandardStateSpec extends Specification with Tables {
     }
   }
 
-  "Elementary transition of various states and characteristic vectors" should {
+  "Transition of various states and characteristic vectors" should {
     "generate new states according to definitions in the algorithm's publication" in {
       // todo: tests for states including t-positions
       "from" | "to" | "word" | "symbol" | "degree" | "inclTranspositions" |>
@@ -101,15 +105,15 @@ class StandardStateSpec extends Specification with Tables {
         (7, 5) ::(9, 4) :: Nil ! (9, 5) ::(10, 5) :: Nil ! "0000000000" ! '1' ! 5 ! false |
         (9, 5) ::(10, 5) :: Nil ! Nil ! "0000000000" ! '1' ! 5 ! false | {
         (from, to, word, symbol, degree, inclTranspositions) =>
-          implicit val _ = DefaultAutomatonConfig(word, degree, inclTranspositions)
+          implicit val config = createLevenshteinAutomatonConfig(word, degree, inclTranspositions)
 
-          (from: NonparametricState).transit(symbol) must be equalTo to
+          LazyLevenshteinAutomaton(config).nextState(from, symbol) must be equalTo to
       }
     }
   }
 
   implicit def conversionToState(stateFormat: List[(Int, Int)])
-                                (implicit c: DefaultAutomatonConfig): NonparametricState =
+                                (implicit c: LevenshteinAutomatonConfig): NonparametricState =
     stateFormat match {
       case Nil => FailureState
       case ps => State(ps.map(t => t._1 ^# t._2): _*)

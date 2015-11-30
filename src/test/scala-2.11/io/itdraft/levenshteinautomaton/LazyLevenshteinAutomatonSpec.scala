@@ -14,12 +14,12 @@ package io.itdraft.levenshteinautomaton
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDescription
+import io.itdraft.levenshteinautomaton.description.parametric.coding.{DefaultEncodedParametricDescriptionFactory, NullEncodedParametricDescriptionFactory}
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.Specification
 import org.specs2.specification.Tables
 
-class LevenshteinAutomatonSpec extends Specification with Tables {
+class LazyLevenshteinAutomatonSpec extends Specification with Tables {
 
   import Util._
 
@@ -30,7 +30,11 @@ class LevenshteinAutomatonSpec extends Specification with Tables {
       Table5("correct" :: "misspelled" :: "degree" :: "inclTranspositions"
         :: "useParametricDescription" :: Nil, rows) |> {
         (correct, misspelled, degree, inclTransp, useParamDescr) =>
-          Automaton(correct, degree, inclTransp, useParamDescr) must accept(misspelled)
+          val parametricDescriptionFactory =
+            if (useParamDescr) new DefaultEncodedParametricDescriptionFactory()
+            else NullEncodedParametricDescriptionFactory
+          LazyLevenshteinAutomaton(correct, degree, inclTransp,
+            parametricDescriptionFactory) must accept(misspelled)
       }
     }
 
@@ -63,39 +67,31 @@ class LevenshteinAutomatonSpec extends Specification with Tables {
         "ab" * 15 ! ("ab" * 15) + ("d" * 16) ! 15 ! false ! false |
         "ab" * 15 ! ("ac" * 14) + "cc" ! 15 ! false ! false | {
         (correct, misspelled, degree, inclTransp, useParamDescr) =>
-          Automaton(correct, degree, inclTransp, useParamDescr) must notAccept(misspelled)
+          val parametricDescriptionFactory =
+            if (useParamDescr) new DefaultEncodedParametricDescriptionFactory()
+            else NullEncodedParametricDescriptionFactory
+          LazyLevenshteinAutomaton(correct, degree, inclTransp,
+            parametricDescriptionFactory) must notAccept(misspelled)
       }
     }
   }
 
-  def accept(misspelled: String): Matcher[LevenshteinAutomaton] = {
-    automaton: LevenshteinAutomaton =>
+  def accept(misspelled: String): Matcher[LazyLevenshteinAutomaton] = {
+    automaton: LazyLevenshteinAutomaton =>
       val state = process(automaton, misspelled)
       (state.isFinal, s"Levenshtein automaton must accept a misspelled word")
   }
 
-  def notAccept(misspelled: String): Matcher[LevenshteinAutomaton] = {
-    automaton: LevenshteinAutomaton =>
+  def notAccept(misspelled: String): Matcher[LazyLevenshteinAutomaton] = {
+    automaton: LazyLevenshteinAutomaton =>
       val state = process(automaton, misspelled)
       (!state.isFinal, s"Levenshtein automaton must not accept a misspelled word")
   }
 
-  def process(automaton: LevenshteinAutomaton, misspelled: String) = {
+  def process(automaton: LazyLevenshteinAutomaton, misspelled: String) = {
     var state = automaton.initialState
-    for (x <- misspelled) state = automaton.next(state, x)
+    for (x <- misspelled) state = automaton.nextState(state, x)
     state
-  }
-
-  object Automaton {
-    def apply(correct: String, degree: Int, inclTranspositions: Boolean,
-              useParametricDescription: Boolean): LevenshteinAutomaton = {
-      val automatonConfig =
-        if (useParametricDescription) AutomatonConfigWithEncodedParametricDescription(
-          correct, Option(EncodedParametricDescription.get(degree, inclTranspositions)).get)
-        else DefaultAutomatonConfig(correct, degree, inclTranspositions)
-
-      LevenshteinAutomaton(automatonConfig)
-    }
   }
 
   def generateRowsForAcceptableMisspelledWords = {

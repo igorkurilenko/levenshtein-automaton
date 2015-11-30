@@ -26,7 +26,7 @@ class DefaultCharacteristicVectorSpec extends Specification {
 
     "be equal to 0 if a word is empty but a range is specified" in {
       val word: String = ""
-      DefaultCharacteristicVector('x', word, 0, word.codePointsCount).size must be equalTo 0
+      DefaultCharacteristicVector('x', word, 0, codePointCount(word)).size must be equalTo 0
     }
 
     "be equal to 0 if a word is not empty but a range is zero" in {

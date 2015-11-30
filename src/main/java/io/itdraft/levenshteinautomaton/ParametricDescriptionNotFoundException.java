@@ -14,6 +14,10 @@ package io.itdraft.levenshteinautomaton;
  * limitations under the License.
  */
 
+/**
+ * Thrown by the {@code create} method of an {@code ParametricLevenshteinAutomaton}
+ * to indicate that there isn't a parametric description for the specified parameters.
+ */
 public class ParametricDescriptionNotFoundException extends LevenshteinAutomatonException {
 
     private static final String MESSAGE =

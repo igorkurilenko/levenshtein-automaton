@@ -1,5 +1,7 @@
 package io.itdraft
 
+import io.itdraft.levenshteinautomaton.description.parametric.coding.{EncodedParametricDescriptionFactory, NullEncodedParametricDescriptionFactory}
+
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +17,33 @@ package io.itdraft
  */
 
 package object levenshteinautomaton {
-  implicit class StringExt(val s: String) {
-    lazy val codePointsCount = Character.codePointCount(s, 0, s.length)
+  protected[levenshteinautomaton]
+  def codePointCount(s: String) = s.codePointCount(0, s.length)
+
+  def createLevenshteinAutomatonConfig(word: String,
+                                       degree: Int,
+                                       inclTransposition: Boolean = false,
+                                       paramDescrFactory: EncodedParametricDescriptionFactory =
+                                       NullEncodedParametricDescriptionFactory) =
+    new LevenshteinAutomatonConfig(word, degree, inclTransposition, paramDescrFactory)
+
+  implicit class LevenshteinAutomatonConfigExt(config: LevenshteinAutomatonConfig) {
+    /**
+      * Max boundary of a word the Levenshtein-automaton is built for.
+      */
+    val w = config.getWordCodePointCount
+
+    /**
+      * Automaton recognizes the set of all words
+      * where the Levenshtein-distance between a word from the set
+      * and a word the automaton is built for does not exceed `n`.
+      */
+    val n = config.getDegree
+
+    /**
+      * Whether include transposition as a primitive edit operation.
+      */
+    val inclTransposition = config.doesInclTransposition
   }
+
 }

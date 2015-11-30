@@ -14,13 +14,13 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
 import org.specs2.execute.Result
 import org.specs2.mutable.Specification
 
 class TPositionSpec extends Specification {
+  import io.itdraft.levenshteinautomaton._
 
-  implicit val c = DefaultAutomatonConfig("10101010", degree = 5)
+  implicit val c = createLevenshteinAutomatonConfig("10101010", degree = 5)
 
   "The 6^#2 t-position (w=8,n=5)" should {
     val position: Position = 6.t ^# 2

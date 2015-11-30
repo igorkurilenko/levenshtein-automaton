@@ -16,17 +16,16 @@ package io.itdraft.levenshteinautomaton.description
 
 import io.itdraft.levenshteinautomaton.description.nonparametric._
 import io.itdraft.levenshteinautomaton.description.parametric.ParametricState
-import io.itdraft.levenshteinautomaton.{AutomatonConfig, AutomatonConfigWithEncodedParametricDescription, DefaultAutomatonConfig}
 
 /**
-  * A class to represent the Levenshtein-automaton state.
+  * A class to represent a state of the Levenshtein-automaton.
   */
 trait State {
 
   /**
-    * Returns the max relevant subword length for this `State`.
+    * Returns minimal boundary of this `State`.
     */
-  def relevantSubwordMaxLength: Int
+  def minBoundary: Int
 
   /**
     * Tests if it's a failure state or not.
@@ -37,50 +36,23 @@ trait State {
     * Tests if it's a final state or not.
     */
   def isFinal: Boolean
-
-  /**
-    * Returns a new `State` produced by elementary transitions of this `State`'s positions.
-    * @param symbolCodePoint Symbol's code point.
-    */
-  protected[levenshteinautomaton] def transit(symbolCodePoint: Int): State
 }
 
-
-object State {
+protected[levenshteinautomaton] object State {
+  import io.itdraft.levenshteinautomaton._
 
   /**
-    * Factory method to create an initial state with respect to `AutomatonConfig`.
+    * Factory method to create an initial state.
     *
-    * @return An instance of `NonParametricState` or `ParametricState`. It depends on
-    *         automaton's configuration type.
+    * @return the initial state as instance of `NonparametricState` or `ParametricState`.
+    *         It depends on whether parametric description exists.
     */
-  protected[levenshteinautomaton]
-  def initial()(implicit ch: AutomatonConfig): State = ch match {
-    case c: DefaultAutomatonConfig => initial(c)
-    case c: AutomatonConfigWithEncodedParametricDescription => initial(c)
-  }
+  def initial()(implicit ch: LevenshteinAutomatonConfig): State =
+    Option(ch.getParametricDescriptionFactory.getEncodedParametricDescription(ch.n, ch.inclTransposition)) match {
+      case Some(_) => ParametricState.initial(ch)
+      case None => NonparametricState.initial(ch)
+    }
 
-  protected[levenshteinautomaton]
-  def initial(ch: DefaultAutomatonConfig): NonparametricState = {
-    implicit val _ = ch
-    State(0 ^# 0)
-  }
-
-  protected[levenshteinautomaton]
-  def initial(ch: AutomatonConfigWithEncodedParametricDescription) =
-    new ParametricState(0, ch)
-
-  protected[levenshteinautomaton]
-  def apply(positions: Position*)(implicit c: DefaultAutomatonConfig): NonparametricState =
-    State(ImageSet(positions: _*))
-
-  protected[levenshteinautomaton]
-  def apply(imageSet: ImageSet)(implicit c: DefaultAutomatonConfig) =
-    if (imageSet.isEmpty) FailureState
-    else new StandardState(imageSet, c)
-
-  protected[levenshteinautomaton]
-  def apply(encodedState: Int, statesCount: Int)
-           (implicit c: AutomatonConfigWithEncodedParametricDescription): ParametricState =
-    new ParametricState(encodedState, c)
+  def apply(positions: Position*)(implicit c: LevenshteinAutomatonConfig): NonparametricState =
+    NonparametricState(positions: _*)
 }

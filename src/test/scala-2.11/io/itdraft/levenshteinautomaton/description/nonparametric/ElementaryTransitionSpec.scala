@@ -42,7 +42,7 @@ class ElementaryTransitionSpec extends Specification with Tables {
         (8, 0) ! "00000000" ! '1' ! 5 ! false ! (8, 1) :: Nil |
         (8, 5) ! "00000000" ! '1' ! 5 ! false ! Nil | {
         (position, word, symbol, degree, inclTranspositions, state: List[(Int, Int)]) =>
-          implicit val automatonConfig = DefaultAutomatonConfig(word, degree, inclTranspositions)
+          implicit val automatonConfig = createLevenshteinAutomatonConfig(word, degree, inclTranspositions)
           val transition = ElementaryTransition()
           val (i, e) = position
           val v = DefaultCharacteristicVector(symbol, word, i)
@@ -53,7 +53,7 @@ class ElementaryTransitionSpec extends Specification with Tables {
   }
 
   implicit def conversionToState(stateFormat: List[(Int, Int)])
-                                (implicit c: DefaultAutomatonConfig): NonparametricState =
+                                (implicit c: LevenshteinAutomatonConfig): NonparametricState =
     stateFormat match {
       case Nil => FailureState
       case ps => State(ps.map(t => t._1 ^# t._2): _*)

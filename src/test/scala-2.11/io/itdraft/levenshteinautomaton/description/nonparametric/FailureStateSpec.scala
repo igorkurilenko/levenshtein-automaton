@@ -14,12 +14,13 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
 import io.itdraft.levenshteinautomaton.description.State
 import org.specs2.mutable.Specification
 
 class FailureStateSpec extends Specification {
-  implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
+  import io.itdraft.levenshteinautomaton._
+
+  implicit val _ = createLevenshteinAutomatonConfig("10101010", degree = 5)
 
   "The failure state" should {
     "be failure" in {

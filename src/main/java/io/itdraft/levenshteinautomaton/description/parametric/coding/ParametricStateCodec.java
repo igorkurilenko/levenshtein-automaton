@@ -14,69 +14,107 @@ package io.itdraft.levenshteinautomaton.description.parametric.coding;
  * limitations under the License.
  */
 
+import io.itdraft.levenshteinautomaton.LevenshteinAutomatonConfig;
+
 import java.util.NoSuchElementException;
 
+/**
+ * This util class decodes the encoded Levenshtein-automaton state
+ * to get minimal boundary, to detect whether it's a final state, or a
+ * failure state.
+ */
 public class ParametricStateCodec {
 
+    /**
+     * Initial parametric state. Start the parametric Levenshtein-automaton
+     * traverse with {@code ParametricStateCodec.INITIAL_STATE}.
+     */
     public static final int INITIAL_STATE = 0;
 
-    public static int transit(int xCodePoint, int state, int w, int n,
-                              String word, EncodedParametricDescription parametricDescription) {
-        int statesCount = parametricDescription.getStatesCount();
-
-        if (isFailure(state, statesCount)) return state;
-
-        int stateId = decodeStateId(state, statesCount);
-        int minBoundary = decodeMinBoundary(state, statesCount);
-        int relSubwordMaxLength = relevantSubwordMaxLength(minBoundary, n, w);
-        int v = CharacteristicVectorCodec.createEncoded(
-                xCodePoint, word, minBoundary, minBoundary + relSubwordMaxLength);
-        int index = (v - 1) * statesCount + stateId;
-        int nextStateId = parametricDescription.getTransitions().get(index);
-        int boundaryOffset = parametricDescription.getBoundaryOffsets().get(index);
-
-        return encodeState(nextStateId, minBoundary + boundaryOffset, statesCount);
-    }
-
-    public static int getMinBoundary(int state, int statesCount) {
-        if (isFailure(state, statesCount)) {
-            throw new NoSuchElementException("Failure state doesn't have the minimal boundary");
+    /**
+     * Returns the current state's minimal boundary.
+     *
+     * @param encodedState          a Levenshtein-automaton parametric state encoded
+     *                              as an integer value.
+     * @param parametricStatesCount the number of parametric states in the parametric
+     *                              description of the Levenshtein-automaton.
+     * @return the minimal boundary of the state, in other words, offset in the input word.
+     */
+    public static int getMinBoundary(int encodedState, int parametricStatesCount) {
+        if (isFailure(encodedState, parametricStatesCount)) {
+            throw new NoSuchElementException(
+                    "Failure encodedState doesn't have the minimal boundary");
         }
 
-        return decodeMinBoundary(state, statesCount);
+        return decodeMinBoundary(encodedState, parametricStatesCount);
     }
 
-    public static boolean isFinal(int state, int w, int n,
-                                  EncodedParametricDescription parametricDescription) {
-        int statesCount = parametricDescription.getStatesCount();
-        boolean isFailure = isFailure(state, statesCount);
+    /**
+     * Tests if a state is a final state.
+     *
+     * @param encodedState a Levenshtein-automaton parametric state encoded
+     *                     as an integer value.
+     * @param config       the config of the parametric Levenshtein-automaton
+     *                     {@code encodedState} belongs to.
+     * @return whether a state is a final state or not.
+     */
+    public static boolean isFinal(int encodedState, LevenshteinAutomatonConfig config) {
+        EncodedParametricDescription parametricDescription =
+                config.getEncodedParametricDescription();
+        int statesCount = parametricDescription.getParametricStatesCount();
 
-        if (isFailure) return false;
+        if (isFailure(encodedState, config)) return false;
 
-        int minBoundary = getMinBoundary(state, statesCount);
-        int stateId = decodeStateId(state, statesCount);
+        int w = config.getWordCodePointCount();
+        int n = config.getDegree();
+        int minBoundary = getMinBoundary(encodedState, statesCount);
+        int stateId = decodeStateId(encodedState, statesCount);
         int[] degreeMinusStateLength = parametricDescription.getDegreeMinusStateLength();
 
         return minBoundary >= w - n + degreeMinusStateLength[stateId];
     }
 
-    public static boolean isFailure(int encodedState, int statesCount) {
-        return decodeStateId(encodedState, statesCount) == statesCount;
+    /**
+     * Tests if a state is a failure state.
+     *
+     * @param encodedState a Levenshtein-automaton parametric state encoded
+     *                     as an integer value.
+     * @param config       the config of the parametric Levenshtein-automaton
+     *                     {@code encodedState} belongs to.
+     * @return whether a state is a failure state or not.
+     */
+    public static boolean isFailure(int encodedState, LevenshteinAutomatonConfig config) {
+        int statesCount = config.getEncodedParametricDescription().getParametricStatesCount();
+
+        return isFailure(encodedState, statesCount);
     }
 
-    private static int relevantSubwordMaxLength(int minBoundary, int n, int w) {
+    /**
+     * Tests if a state is a failure state.
+     *
+     * @param encodedState          a Levenshtein-automaton parametric state encoded
+     *                              as an integer value.
+     * @param parametricStatesCount the number of parametric states in the parametric
+     *                              description of the Levenshtein-automaton.
+     * @return whether a state is a failure state or not.
+     */
+    public static boolean isFailure(int encodedState, int parametricStatesCount) {
+        return decodeStateId(encodedState, parametricStatesCount) == parametricStatesCount;
+    }
+
+    protected static int relevantSubwordMaxLength(int minBoundary, int n, int w) {
         return Math.min(2 * n + 1, w - minBoundary);
     }
 
-    private static int decodeMinBoundary(int encodedState, int statesCount) {
+    protected static int decodeMinBoundary(int encodedState, int statesCount) {
         return encodedState / (statesCount + 1);
     }
 
-    private static int decodeStateId(int encodedState, int statesCount) {
+    protected static int decodeStateId(int encodedState, int statesCount) {
         return encodedState % (statesCount + 1);
     }
 
-    private static int encodeState(int stateId, int minBoundary, int statesCount) {
+    protected static int encodeState(int stateId, int minBoundary, int statesCount) {
         return minBoundary * (statesCount + 1) + stateId;
     }
 

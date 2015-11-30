@@ -26,7 +26,7 @@ class EncodedCharacteristicVectorSpec extends Specification {
 
      "be equal to 0 if a word is empty but a range is specified" in {
        val word: String = ""
-       EncodedCharacteristicVector('x', word, 0, word.codePointsCount).size must be equalTo 0
+       EncodedCharacteristicVector('x', word, 0, codePointCount(word)).size must be equalTo 0
      }
 
      "be equal to 0 if a word is not empty but a range is zero" in {
@@ -44,7 +44,6 @@ class EncodedCharacteristicVectorSpec extends Specification {
        EncodedCharacteristicVector('x', word, 0, word.length).size must be equalTo 7
      }
    }
-
 
    """Minimal index j in the characteristic vector of the "hello"""" should {
      val word: String = "hello"

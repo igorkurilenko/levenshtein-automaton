@@ -1,5 +1,7 @@
 package io.itdraft.levenshteinautomaton.description
 
+import io.itdraft.levenshteinautomaton.LevenshteinAutomatonConfig
+
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +16,14 @@ package io.itdraft.levenshteinautomaton.description
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
-
 package object nonparametric {
 
-  // DSL to create position and t-position
+  // DSL to create position and t-position:
+  // 0 ^# 0 - create position
+  // 0.t ^# 0 - create t-position
 
   protected[levenshteinautomaton] implicit class IntExt(val i: Int) {
-    def ^#(e: Int)(implicit c: DefaultAutomatonConfig): Position =
+    def ^#(e: Int)(implicit c: LevenshteinAutomatonConfig): Position =
       StandardPosition(i, e, c)
 
     def t = TInt(i)
@@ -30,7 +32,7 @@ package object nonparametric {
   protected[levenshteinautomaton] case class TInt(i: Int)
 
   protected[levenshteinautomaton] implicit class TIntExt(val ti: TInt) {
-    def ^#(e: Int)(implicit c: DefaultAutomatonConfig): Position =
+    def ^#(e: Int)(implicit c: LevenshteinAutomatonConfig): Position =
       TPosition(ti.i, e, c)
   }
 }

@@ -14,22 +14,23 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
 import io.itdraft.levenshteinautomaton.description.{DefaultCharacteristicVector, State}
 
 /**
   * A class to represent the elementary transitions table 4.1 and 7.1 from the paper.
   */
 protected[levenshteinautomaton] object ElementaryTransition {
+  import io.itdraft.levenshteinautomaton._
 
   /**
-    * A factory method to create an elementary transition function.
+    * A factory method to create the elementary transition function.
     *
-    * @param automatonConfig A configuration for the nonparametrically described
+    * @param automatonConfig a configuration for the nonparametrically described
     *                        Levenshtein-automaton.
-    * @return A function which represents elementary transition of one of the tables.
+    *
+    * @return a function which represents the elementary transition.
     */
-  def apply()(implicit automatonConfig: DefaultAutomatonConfig):
+  def apply()(implicit automatonConfig: LevenshteinAutomatonConfig):
   (Position, DefaultCharacteristicVector) => NonparametricState = {
     if (automatonConfig.inclTransposition) inclTranspositionsTransition
     else standardTransition
@@ -39,9 +40,9 @@ protected[levenshteinautomaton] object ElementaryTransition {
     * Represents elementary transition of the 4.1 table.
     */
   private def standardTransition(position: Position, v: DefaultCharacteristicVector)
-                                (implicit config: DefaultAutomatonConfig) = {
+                                (implicit automatonConfig: LevenshteinAutomatonConfig) = {
     val e = position.e
-    val n = config.degree
+    val n = automatonConfig.n
 
     if (0 <= e && e <= n - 1) standardTransitionPart1(position, v)
     else if (e == n) standardTransitionPart2(position, v)
@@ -52,7 +53,7 @@ protected[levenshteinautomaton] object ElementaryTransition {
     * Represents elementary transition of the part 1 of the 4.1 table.
     */
   private def standardTransitionPart1(position: Position, v: DefaultCharacteristicVector)
-                                     (implicit config: DefaultAutomatonConfig) = {
+                                     (implicit config: LevenshteinAutomatonConfig) = {
     val i = position.i
     val e = position.e
     val w = config.w
@@ -77,10 +78,10 @@ protected[levenshteinautomaton] object ElementaryTransition {
     * Represents elementary transition of the part 2 of the 4.1 table.
     */
   private def standardTransitionPart2(position: Position, v: DefaultCharacteristicVector)
-                                     (implicit config: DefaultAutomatonConfig) = {
+                                     (implicit config: LevenshteinAutomatonConfig) = {
     val i = position.i
     val w = config.w
-    val n = config.degree
+    val n = config.n
 
     if (i <= w - 1)
       v.j match {
@@ -94,9 +95,9 @@ protected[levenshteinautomaton] object ElementaryTransition {
     * Represents elementary transition of the 7.1 table.
     */
   private def inclTranspositionsTransition(position: Position, v: DefaultCharacteristicVector)
-                                          (implicit config: DefaultAutomatonConfig) = {
+                                          (implicit automatonConfig: LevenshteinAutomatonConfig) = {
     val e = position.e
-    val n = config.degree
+    val n = automatonConfig.n
 
     if (e == 0 && e < n) inclTranspositionsTransitionPart1(position, v)
     else if (1 <= e && e <= n - 1) inclTranspositionsTransitionPart2(position, v)
@@ -108,7 +109,7 @@ protected[levenshteinautomaton] object ElementaryTransition {
     * Represents elementary transition of the part 1 of the 7.1 table.
     */
   private def inclTranspositionsTransitionPart1(position: Position, v: DefaultCharacteristicVector)
-                                               (implicit config: DefaultAutomatonConfig) = {
+                                               (implicit config: LevenshteinAutomatonConfig) = {
     val i = position.i
     val w = config.w
 
@@ -133,7 +134,7 @@ protected[levenshteinautomaton] object ElementaryTransition {
     * Represents elementary transition of the part 2 of the 7.1 table.
     */
   private def inclTranspositionsTransitionPart2(position: Position, v: DefaultCharacteristicVector)
-                                               (implicit config: DefaultAutomatonConfig) = {
+                                               (implicit config: LevenshteinAutomatonConfig) = {
     val i = position.i
     val e = position.e
     val w = config.w
@@ -167,10 +168,10 @@ protected[levenshteinautomaton] object ElementaryTransition {
     * Represents elementary transition of the part 3 of the 7.1 table.
     */
   private def inclTranspositionsTransitionPart3(position: Position, v: DefaultCharacteristicVector)
-                                               (implicit config: DefaultAutomatonConfig) = {
+                                               (implicit config: LevenshteinAutomatonConfig) = {
     val i = position.i
     val w = config.w
-    val n = config.degree
+    val n = config.n
 
     position match {
       case StandardPosition(_, _, _) =>

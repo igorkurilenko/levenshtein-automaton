@@ -14,17 +14,14 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
 import org.specs2.mutable.Specification
 
 class EmptyImageSetSpec extends Specification {
-  implicit val _ = DefaultAutomatonConfig("10101010", degree = 5)
+  import io.itdraft.levenshteinautomaton._
+
+  implicit val _ = createLevenshteinAutomatonConfig("10101010", degree = 5)
 
   "The empty image set" should {
-    "have not a min boundary" in {
-      EmptyImageSet.minBoundary must throwA[NoSuchElementException]
-    }
-
     "be empty" in {
       EmptyImageSet.isEmpty must beTrue
     }

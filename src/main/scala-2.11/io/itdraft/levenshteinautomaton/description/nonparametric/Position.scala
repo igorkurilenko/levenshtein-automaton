@@ -1,5 +1,7 @@
 package io.itdraft.levenshteinautomaton.description.nonparametric
 
+import io.itdraft.levenshteinautomaton.LevenshteinAutomatonConfig
+
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +16,10 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.DefaultAutomatonConfig
-
+/**
+  * A trait to represent the Levenshtein-automaton state's position.
+  */
 protected[levenshteinautomaton] sealed trait Position extends Ordered[Position] {
-  assert(0 <= i && i <= w)
-  assert(0 <= e && e <= n)
-
-  protected lazy val w = automatonConfig.w
-  protected lazy val n = automatonConfig.n
 
   /**
     * Boundary of an input word.
@@ -33,12 +31,10 @@ protected[levenshteinautomaton] sealed trait Position extends Ordered[Position] 
     */
   def e: Int
 
-  def automatonConfig: DefaultAutomatonConfig
-
   /**
-    * Whether current position subsumes a passed position.
+    * Whether current `Position` subsumes `position`.
     */
-  def subsumes(p: Position): Boolean
+  def subsumes(position: Position): Boolean
 
   /**
     * Tests if this `Position` is an accepting position.
@@ -46,15 +42,45 @@ protected[levenshteinautomaton] sealed trait Position extends Ordered[Position] 
   def isAccepting: Boolean
 
   /**
-    * Returns the max length of a relevant subword for this `Position`.
+    * Returns the max allowed length of a relevant subword for this `Position`.
     */
   def relevantSubwordMaxLength: Int
+
+  /**
+    * Returns the result of comparing this `Position` with `that` `Position`.
+    *
+    * @note Out of paper. Useful to organize an image set of
+    *       positions in the form of a binary search tree.
+    */
+  def compare(that: Position) = {
+    val result = if (e == that.e) i - that.i else e - that.e
+
+    result match {
+      case 0 if this.isInstanceOf[StandardPosition] && that.isInstanceOf[TPosition] => 1
+      case 0 if this.isInstanceOf[TPosition] && that.isInstanceOf[StandardPosition] => -1
+      case _ => result
+    }
+  }
 }
 
-
+/**
+  * A class to represent the standard position (not t-position).
+  *
+  * @note There is a DSL to create standard position.
+  *
+  * @example {{{val position = 0 ^# 0}}}
+  */
 protected[levenshteinautomaton]
-case class StandardPosition(i: Int, e: Int, automatonConfig: DefaultAutomatonConfig)
+case class StandardPosition(i: Int, e: Int, automatonConfig: LevenshteinAutomatonConfig)
   extends Position {
+
+  import io.itdraft.levenshteinautomaton._
+
+  assert(0 <= i && i <= w)
+  assert(0 <= e && e <= n)
+
+  private lazy val w = automatonConfig.w
+  private lazy val n = automatonConfig.n
 
   def subsumes(p: Position) = p match {
     case StandardPosition(j, f, _) => e < f && Math.abs(j - i) <= f - e
@@ -68,19 +94,26 @@ case class StandardPosition(i: Int, e: Int, automatonConfig: DefaultAutomatonCon
   override def hashCode = 41 * (41 + i) + e
 
   override def toString = s"$i^#$e"
-
-  def compare(that: Position) = {
-    val result = if (e == that.e) i - that.i else e - that.e
-
-    if (result == 0 && that.isInstanceOf[TPosition]) 1
-    else result
-  }
 }
 
-
+/**
+  * A class to represent the t-position.
+  *
+  * @note There is a DSL to create t-position.
+  *
+  * @example {{{val tPosition = 0.t ^# 0}}}
+  */
 protected[levenshteinautomaton]
-case class TPosition(i: Int, e: Int, automatonConfig: DefaultAutomatonConfig)
+case class TPosition(i: Int, e: Int, automatonConfig: LevenshteinAutomatonConfig)
   extends Position {
+
+  import io.itdraft.levenshteinautomaton._
+
+  assert(0 <= i && i <= w)
+  assert(0 <= e && e <= n)
+
+  private lazy val w = automatonConfig.w
+  private lazy val n = automatonConfig.n
 
   def subsumes(p: Position) = p match {
     case StandardPosition(j, f, _) => n == f && f > e && i == j
@@ -97,11 +130,4 @@ case class TPosition(i: Int, e: Int, automatonConfig: DefaultAutomatonConfig)
   override def hashCode = 41 * (41 * (41 + i) + e) + 1
 
   override def toString = s"$i\u2081^#$e"
-
-  def compare(that: Position) = {
-    val result = if (e == that.e) i - that.i else e - that.e
-
-    if (result == 0 && that.isInstanceOf[StandardPosition]) -1
-    else result
-  }
 }

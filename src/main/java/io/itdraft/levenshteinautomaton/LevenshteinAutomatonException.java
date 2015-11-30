@@ -14,6 +14,9 @@ package io.itdraft.levenshteinautomaton;
  * limitations under the License.
  */
 
+/**
+ * Topmost exception in the Levenshtein-automaton library's exceptions hierarchy.
+ */
 public abstract class LevenshteinAutomatonException extends Exception {
 
     public LevenshteinAutomatonException(String message) {

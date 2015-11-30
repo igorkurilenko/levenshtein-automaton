@@ -14,11 +14,12 @@ package io.itdraft.levenshteinautomaton.description.parametric.coding;
  * limitations under the License.
  */
 
+import io.itdraft.levenshteinautomaton.LevenshteinAutomatonConfig;
 import org.junit.Test;
 
 import java.util.NoSuchElementException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class ParametricStateCodecTest {
 
@@ -29,12 +30,14 @@ public class ParametricStateCodecTest {
 
     @Test
     public void testGetMinBoundary() throws Exception {
-        assertTrue(ParametricStateCodec.getMinBoundary(129,30) == 4);
+        assertTrue(ParametricStateCodec.getMinBoundary(129, 30) == 4);
     }
 
     @Test
     public void testIsFinal() throws Exception {
-        assertTrue(ParametricStateCodec.isFinal(44, 7, 2, EncodedParametricDescription.get(1, true)));
+        assertTrue(ParametricStateCodec.isFinal(44,
+                new LevenshteinAutomatonConfig("abcdefg", 2, true,
+                new DefaultEncodedParametricDescriptionFactory())));
     }
 
     @Test
