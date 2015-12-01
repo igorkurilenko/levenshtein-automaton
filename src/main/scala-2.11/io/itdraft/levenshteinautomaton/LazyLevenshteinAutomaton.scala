@@ -22,7 +22,7 @@ import io.itdraft.levenshteinautomaton.description.parametric.coding.{DefaultEnc
 /**
   * A class to represent the Levenshtein-automaton.
   *
-  * @note Lazy because computes next state on every transition.
+  * @note Lazy because it computes next state on every transition.
   *
   * @example {{{
   * val dictionaryWord: String = ...
@@ -32,13 +32,13 @@ import io.itdraft.levenshteinautomaton.description.parametric.coding.{DefaultEnc
   *   misspelledWord,
   *   degree = 2,
   *   includeTransposition = true)
-  * var state = automaton.initial
+  * var state = automaton.initialState
   *
   *  // traverse
   *  var i, cp = 0
   *  while(i < dictionaryWord.length) {
   *   cp = dictionaryWord.codePointAt(i)
-  *   state = automaton.next(state, cp)
+  *   state = automaton.nextState(state, cp)
   *   i += Character.charCount(cp)
   * }
   *
