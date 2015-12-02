@@ -70,7 +70,7 @@ public class LazyParametricLevenshteinAutomaton {
      * @return a next state encoded as integer value.
      */
     public int nextState(int stateFrom, int symbolCodePoint) {
-        return ParametricDescriptionCodec.transit(symbolCodePoint, stateFrom, config);
+        return ParametricDescriptionCodec.transit(stateFrom, symbolCodePoint, config);
     }
 
     /**

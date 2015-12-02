@@ -63,7 +63,7 @@ public class ParametricStateCodec {
                 config.getEncodedParametricDescription();
         int statesCount = parametricDescription.getParametricStatesCount();
 
-        if (isFailure(encodedState, config)) return false;
+        if (isFailure(encodedState, statesCount)) return false;
 
         int w = config.getWordCodePointCount();
         int n = config.getDegree();

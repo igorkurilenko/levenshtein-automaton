@@ -36,7 +36,7 @@ public class ParametricStateCodecTest {
     @Test
     public void testIsFinal() throws Exception {
         assertTrue(ParametricStateCodec.isFinal(44,
-                new LevenshteinAutomatonConfig("abcdefg", 2, true,
+                new LevenshteinAutomatonConfig("abcdefg", 1, true,
                 new DefaultEncodedParametricDescriptionFactory())));
     }
 
