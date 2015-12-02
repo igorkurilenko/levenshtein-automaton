@@ -25,29 +25,29 @@ class DefaultCharacteristicVectorSpec extends Specification {
     }
 
     "be equal to 0 if a word is empty but a range is specified" in {
-      val word: String = ""
+      val word = ""
       DefaultCharacteristicVector('x', word, 0, codePointCount(word)).size must be equalTo 0
     }
 
     "be equal to 0 if a word is not empty but a range is zero" in {
-      val word: String = "abcdefg"
+      val word = "abcdefg"
       DefaultCharacteristicVector('x', word, 0, 0).size must be equalTo 0
     }
 
     "be equal to 0 if a word is not empty but a range is out of boundaries" in {
-      val word: String = "abcdefg"
+      val word = "abcdefg"
       DefaultCharacteristicVector('x', word, 100, 1000).size must be equalTo 0
     }
 
     """be equal to 7 if a word is the "abcdefg"""" in {
-      val word: String = "abcdefg"
+      val word = "abcdefg"
       DefaultCharacteristicVector('x', word, 0, word.length).size must be equalTo 7
     }
   }
 
 
   """Minimal index j in the characteristic vector of the "hello"""" should {
-    val word: String = "hello"
+    val word = "hello"
 
     "be equal to 3 for the 'l' symbol" in {
       DefaultCharacteristicVector('l', word, 0, word.length).j must be equalTo 3

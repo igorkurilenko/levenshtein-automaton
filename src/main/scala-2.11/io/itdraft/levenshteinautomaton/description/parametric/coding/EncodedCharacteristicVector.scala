@@ -24,7 +24,7 @@ import io.itdraft.levenshteinautomaton.description.parametric.coding.Characteris
   * @note Such way of the characteristic vector representation is
   *       useful for parametric description encoding.
   * @note Maximal allowed size of the characteristic vector is
-  *       [[io.itdraft.levenshteinautomaton.description.parametric.coding.CharacteristicVectorCodec#MAX_ALLOWED_SIZE CharacteristicVectorCodec#MAX_ALLOWED_SIZE]].
+  *       [[io.itdraft.levenshteinautomaton.description.parametric.coding.CharacteristicVectorCodec#MAX_ALLOWED_VECTOR_SIZE CharacteristicVectorCodec#MAX_ALLOWED_VECTOR_SIZE]].
   *
   * @param asInt a characteristic vector represented as integer value.
   */
@@ -59,7 +59,7 @@ object EncodedCharacteristicVector {
     * returned (no exceptions are thrown).
     *
     * @note If `until - from` exceeds
-    *       `[[io.itdraft.levenshteinautomaton.description.parametric.coding.CharacteristicVectorCodec#MAX_ALLOWED_SIZE CharacteristicVectorCodec#MAX_ALLOWED_SIZE]] + 1`
+    *       `[[io.itdraft.levenshteinautomaton.description.parametric.coding.CharacteristicVectorCodec#MAX_ALLOWED_VECTOR_SIZE CharacteristicVectorCodec#MAX_ALLOWED_VECTOR_SIZE]]`
     *       then invalid characteristic vector will be returned.
     *
     * @param symbolCodePoint a symbol's code point the characteristic

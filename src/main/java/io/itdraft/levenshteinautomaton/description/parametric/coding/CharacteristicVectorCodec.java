@@ -22,7 +22,7 @@ import static java.lang.Integer.numberOfLeadingZeros;
  */
 public final class CharacteristicVectorCodec {
 
-    public static final int MAX_ALLOWED_SIZE = Integer.SIZE - 1;
+    public static final int MAX_ALLOWED_VECTOR_SIZE = Integer.SIZE - 1;
 
     // The empty characteristic vector is represented as 1.
     // There is one-bit which denotes the boundary of the characteristic vector.
@@ -42,7 +42,7 @@ public final class CharacteristicVectorCodec {
      * <p>
      * <b>Note:</b><br/>
      * If {@code until - from} exceeds
-     * <code>{@link CharacteristicVectorCodec#MAX_ALLOWED_SIZE} + 1</code>
+     * {@link CharacteristicVectorCodec#MAX_ALLOWED_VECTOR_SIZE}
      * then invalid characteristic vector will be returned.
      * </p>
      *
@@ -56,9 +56,11 @@ public final class CharacteristicVectorCodec {
      * @return an encoded characteristic vector as integer value of the {@code word}'s
      * range from {@code from} up to (but not including) {@code until}.
      */
-    public static int createEncodedCharacteristicVector(final int symbolCodePoint, final String word,
+    public static int createEncodedCharacteristicVector(final int symbolCodePoint,
+                                                        final String word,
                                                         final int from, final int until) {
-        assert (until - from <= MAX_ALLOWED_SIZE + 1);
+        assert until - from <= MAX_ALLOWED_VECTOR_SIZE:
+                "Specified range for characteristic vector creation exceeds maximal allowed value.";
 
         int r = 0, i = 0, curCodePoint = 0;
         int vector = EMPTY;
