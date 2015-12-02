@@ -14,7 +14,7 @@ package io.itdraft.levenshteinautomaton.description.parametric.coding;
  * limitations under the License.
  */
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class CharacteristicVectorCodecTest {
@@ -23,51 +23,51 @@ public class CharacteristicVectorCodecTest {
     public void testCreateEncoded() throws Exception {
         String word = "";
         int vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', word, 0, 10);
-        Assert.assertTrue(vector == CharacteristicVectorCodec.EMPTY);
+        assertTrue(vector == CharacteristicVectorCodec.EMPTY);
 
         word = "xoxoxo";
         vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', word, 4, 6);
-        Assert.assertTrue(vector == Integer.parseInt("110", 2));
+        assertTrue(vector == Integer.parseInt("110", 2));
 
         word = "xoxoxo";
         vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', word, 100, 1000);
-        Assert.assertTrue(vector == CharacteristicVectorCodec.EMPTY);
+        assertTrue(vector == CharacteristicVectorCodec.EMPTY);
 
         word = "xoxoxo";
         vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', word, -1000, -100);
-        Assert.assertTrue(vector == CharacteristicVectorCodec.EMPTY);
+        assertTrue(vector == CharacteristicVectorCodec.EMPTY);
 
         word = "xoxoxo";
         vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', word, 0, 0);
-        Assert.assertTrue(vector == CharacteristicVectorCodec.EMPTY);
+        assertTrue(vector == CharacteristicVectorCodec.EMPTY);
     }
 
     @Test
     public void testDecodeJ() throws Exception {
         String word = "xoxoxo";
         int vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('o', word, 0, word.length());
-        Assert.assertTrue(CharacteristicVectorCodec.decodeJ(vector) == 2);
+        assertTrue(CharacteristicVectorCodec.decodeJ(vector) == 2);
 
         vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('y', word, 0, word.length());
-        Assert.assertTrue(CharacteristicVectorCodec.decodeJ(vector) == -1);
+        assertTrue(CharacteristicVectorCodec.decodeJ(vector) == -1);
 
         word = "";
         vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('y', word, 0, word.length());
-        Assert.assertTrue(CharacteristicVectorCodec.decodeJ(vector) == -1);
+        assertTrue(CharacteristicVectorCodec.decodeJ(vector) == -1);
     }
 
     @Test
     public void testSize() throws Exception {
         String word = "";
         int vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', word, 0, 10);
-        Assert.assertTrue(CharacteristicVectorCodec.size(vector) == 0);
+        assertTrue(CharacteristicVectorCodec.size(vector) == 0);
 
         word = "xoxoxo";
         vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', word, 4, 6);
-        Assert.assertTrue(CharacteristicVectorCodec.size(vector) == 2);
+        assertTrue(CharacteristicVectorCodec.size(vector) == 2);
 
         word = "xoxoxo";
         vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', word, 0, word.length());
-        Assert.assertTrue(CharacteristicVectorCodec.size(vector) == word.length());
+        assertTrue(CharacteristicVectorCodec.size(vector) == word.length());
     }
 }
