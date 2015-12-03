@@ -15,7 +15,6 @@ package io.itdraft.levenshteinautomaton;
  */
 
 import io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDescription;
-import io.itdraft.levenshteinautomaton.description.parametric.coding.ParametricDescriptionCodec;
 import io.itdraft.levenshteinautomaton.description.parametric.coding.ParametricStateCodec;
 
 /**
@@ -70,7 +69,7 @@ public class LazyParametricLevenshteinAutomaton {
      * @return a next state encoded as integer value.
      */
     public int nextState(int stateFrom, int symbolCodePoint) {
-        return ParametricDescriptionCodec.transit(stateFrom, symbolCodePoint, config);
+        return ParametricStateCodec.transit(stateFrom, symbolCodePoint, config);
     }
 
     /**

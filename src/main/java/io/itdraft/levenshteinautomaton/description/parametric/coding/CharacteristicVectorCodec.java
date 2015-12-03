@@ -35,9 +35,9 @@ public final class CharacteristicVectorCodec {
 
     /**
      * Creates the characteristic vector <code>&lt;b<sub>i</sub>, ..., b<sub>k</sub>&gt;</code>
-     * of a symbol specified by a code point with respect to {@code word} where {@code i = from} and
-     * {@code k = until - 1}. If the specified interval is invalid then an empty vector will be
-     * returned (no exceptions are thrown).
+     * of a symbol specified by a code point with respect to {@code word} where {@code i = from}
+     * and {@code k = until - 1}. If the specified interval is invalid then an empty vector will
+     * be returned (no exceptions are thrown).
      * <p>
      * <p>
      * <b>Note:</b><br/>

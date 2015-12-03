@@ -17,7 +17,7 @@ package io.itdraft.levenshteinautomaton
 import io.itdraft.levenshteinautomaton.description._
 import io.itdraft.levenshteinautomaton.description.nonparametric.{ElementaryTransition, FailureState, NonparametricState, Position}
 import io.itdraft.levenshteinautomaton.description.parametric.ParametricState
-import io.itdraft.levenshteinautomaton.description.parametric.coding.{DefaultEncodedParametricDescriptionFactory, EncodedParametricDescriptionFactory, ParametricDescriptionCodec}
+import io.itdraft.levenshteinautomaton.description.parametric.coding.{DefaultEncodedParametricDescriptionFactory, EncodedParametricDescriptionFactory, ParametricStateCodec}
 
 /**
   * A class to represent the Levenshtein-automaton.
@@ -81,7 +81,7 @@ class LazyLevenshteinAutomaton private(automatonConfig: LevenshteinAutomatonConf
       position.i, position.i + position.relevantSubwordMaxLength)
 
   private def transit(state: ParametricState, symbolCodePoint: Int) = {
-    val nextState = ParametricDescriptionCodec.transit(
+    val nextState = ParametricStateCodec.transit(
       state.asEncodedInteger, symbolCodePoint, automatonConfig)
 
     new ParametricState(nextState, automatonConfig)
