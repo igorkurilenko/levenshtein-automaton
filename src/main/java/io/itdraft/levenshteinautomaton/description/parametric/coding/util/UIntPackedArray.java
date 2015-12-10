@@ -2,7 +2,6 @@ package io.itdraft.levenshteinautomaton.description.parametric.coding.util;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.LongFunction;
 
 /**
  *
@@ -43,9 +42,9 @@ public class UIntPackedArray {
         return unpack(packed, index, bitsPerValue);
     }
 
-    public void foreach(LongFunction<Void> f) {
-        for (long x : packed) {
-            f.apply(x);
+    public void foreach(IteratorFunction f) {
+        for (int i = 0, length = packed.length; i < length; i++) {
+            f.apply(packed[i], i == length - 1);
         }
     }
 
@@ -128,4 +127,10 @@ public class UIntPackedArray {
 
         return max;
     }
+
+    @FunctionalInterface
+    public interface IteratorFunction {
+        void apply(long value, boolean isFinal);
+    }
+
 }

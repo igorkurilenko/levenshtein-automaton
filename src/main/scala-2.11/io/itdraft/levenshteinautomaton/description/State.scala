@@ -55,4 +55,7 @@ protected[levenshteinautomaton] object State {
 
   def apply(positions: Position*)(implicit c: LevenshteinAutomatonConfig): NonparametricState =
     NonparametricState(positions: _*)
+
+  def apply(imageSet: ImageSet)(implicit c: LevenshteinAutomatonConfig) =
+    NonparametricState(imageSet)
 }

@@ -10,3 +10,5 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2" % "2.3.11" % "test")
 
 scalacOptions in (Compile,doc) := Seq("-groups", "-implicits")
+
+enablePlugins(JavaAppPackaging)

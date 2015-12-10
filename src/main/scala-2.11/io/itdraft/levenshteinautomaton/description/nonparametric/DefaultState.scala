@@ -17,7 +17,6 @@ package io.itdraft.levenshteinautomaton.description.nonparametric
 import io.itdraft.levenshteinautomaton.LevenshteinAutomatonConfig
 import io.itdraft.levenshteinautomaton.description._
 
-
 /**
   * Represents the state of the nonparametrically described Levenshtein-automaton.
   */

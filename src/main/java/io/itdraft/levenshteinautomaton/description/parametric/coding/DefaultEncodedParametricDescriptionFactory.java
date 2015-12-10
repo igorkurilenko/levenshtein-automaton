@@ -1,5 +1,19 @@
 package io.itdraft.levenshteinautomaton.description.parametric.coding;
 
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import io.itdraft.levenshteinautomaton.description.parametric.coding.util.UIntPackedArray;
 
 import java.util.HashMap;
@@ -12,145 +26,172 @@ import java.util.Map;
  */
 public class DefaultEncodedParametricDescriptionFactory implements EncodedParametricDescriptionFactory {
 
+    protected static final EncodedParametricDescription[] ENCODED_PARAMETRIC_DESCRIPTIONS = new EncodedParametricDescription[]{
+            new EncodedParametricDescription(1, false,
+                    new UIntPackedArray(3, new long[]{0xbb6d56922db55b69L, 0x6ab6d45220924526L, 0x848249051ae93593L, 0x11a20a444L}),
+                    new UIntPackedArray(2, new long[]{0x5554a00001500000L, 0x55557a0283c00015L, 0x155555L}),
+                    new int[]{0, 1, 0, -1, -1}),
+            new EncodedParametricDescription(1, true,
+                    new UIntPackedArray(3, new long[]{0x6cb6c48db6cb6db1L, 0x8a488251231273dbL, 0x473c49cc93b2db6cL, 0x829222d84825120aL, 0x2c88L}),
+                    new UIntPackedArray(2, new long[]{0x52a0000015000000L, 0xa02a0fc000055555L, 0x555555555555eL}),
+                    new int[]{0, 1, 0, -1, -1, -1}),
+            new EncodedParametricDescription(2, false,
+                    new UIntPackedArray(5, new long[]{
+                            0xef7bdef7bdef79c1L, 0xdef7bdef7bdef7bdL, 0xbdef7bcf78bdef7bL, 0x7bdef7bdef7bdef7L, 0xf0420f7bdef7bdefL,
+                            0xe73bdef7bdef7bdeL, 0xdef7bdef7bdef7bdL, 0xbdef3ddef78a578bL, 0x7bdef7bdef7bdef7L, 0x779de39ca3f17defL,
+                            0xef7bde77bdef7bc5L, 0x21083c5f7bdef7bdL, 0x9cef7bdef05fe778L, 0x7def7bdef7bdef3L, 0xf7bc17f9fe10820fL,
+                            0xef7bdef7bce7bbdeL, 0xfef14c578bc1f7bdL, 0xbdef7bde7bfdef3dL, 0x19e4719eef7bdef7L, 0xf7a4ff7bd20b9c6dL,
+                            0xa0bbdef3bdef7bceL, 0xdef15ee71ce728ddL, 0xbdef7bcef79de297L, 0xbde7d9ca3719eff7L, 0xf3bce778c5f7bc60L,
+                            0x1081da0bfdef3bdeL, 0xce087def04ae7050L, 0xb0f7bcef7bce739L, 0x7bc83c208e202082L, 0xf43def39d073901fL,
+                            0xf788420821c3c3deL, 0xcf739ee087def04aL, 0x820820a5f7bcef7bL, 0xb901f7bc8394a218L, 0x397def43def3dd07L,
+                            0xef3dfef14c578a1cL, 0xdef7bdef7bde7bdfL, 0xbc9515e2798aff7bL, 0x39def7ab52bbcf2bL, 0x7902a385ce73bdefL,
+                            0xe93c2e7482e71b46L, 0x2ff3bcef3bdef3bdL, 0xdd20bdcad19e47e8L, 0x3fcef39cef7b350bL, 0x71ce728c3a105cf7L,
+                            0xef79de295ee715eeL, 0xa3798a577bde77bcL, 0x9292c1c52c1cb59cL, 0x9e0e739def41de77L, 0x7982f79f6728c2a3L,
+                            0xe73bcef39de3142fL, 0xebd9ca37e82573bcL, 0x1ce77949095e6095L, 0x803a11e0f73dcef4L, 0x84ae704ae705010L,
+                            0x6739ce739ce739ceL, 0xc1345cc68420b20dL, 0x5ce7462e7398c345L, 0x2388083add76318cL, 0x741ce404f0820f08L,
+                            0xb70f6741d0741ceL, 0xac3da083da0de202L, 0x6368d9d074630739L, 0x84af78842083bcdfL, 0x7b9cf739ee084af7L,
+                            0x420820b20c67b9ceL, 0x2e7b98c349e1349eL, 0x3add6a518c5ee74aL, 0x4e52a0e52886208L, 0x7c1d07c1cf741ee4L,
+                            0x8398a418820b70e6L, 0xf074a307b9ac398aL, 0x4c578bbcdea568d9L, 0x7bde7bdfef3dfef1L, 0x798aff7bdef7bdefL,
+                            0xf939cf7fbc5315e2L, 0xce779ce77bdef79eL, 0xcaef2545788a6315L, 0x7bce77bdead4aef3L, 0x515e20a8e1739cefL,
+                            0xef7ab533dcf2bbc9L, 0x2a385ef7b9ce739dL, 0xc2e7482e71b46790L, 0x3bcef3bdef3bde93L, 0xb9c6d19e47e82ffL,
+                            0x77bcef7a4f44212L, 0x46790ba415d0739dL, 0xbdecd42f7482f72bL, 0xe84173dcff3bce73L, 0x416120bdcad19e40L,
+                            0x57bdd0739cef7b35L, 0xee71ce728c3a105eL, 0xbcef79de295ee715L, 0x9ca3798a577bde77L, 0x778a5946257b9c73L,
+                            0x631a2e77a2e73bdeL, 0xb0714b072d6728caL, 0x9ce77bd0779de4a4L, 0xc1cb59ca30a8e783L, 0x741de7792935a252L,
+                            0x728c2a39ecf7ba2eL, 0xde3142f7982f79f6L, 0x82573bce73bcef39L, 0x4a460bde7d9ca37eL, 0x73a3073bce778c54L,
+                            0x57af6728cba41a30L, 0xd0739de524257982L, 0xca30e84783dcf73bL, 0x794941a46095ebd9L, 0x11ec57be30741ce7L,
+                            0xe704ae705010803aL, 0xce739ce739ce084aL, 0x9c140420b20d6739L, 0xb9ce738214ce612bL, 0x8308562739ba739L,
+                            0xe630d1704d1731a1L, 0x5d8c631739d18b9cL, 0xe61345cc68420eb7L, 0xc6739c62e7398c55L, 0x82388083add76f7bL,
+                            0xe741ce404f0820f0L, 0x20b70f6741d0741cL, 0x9015d2883c208e20L, 0xe2749c2749b9d073L, 0x820f6837880831c5L,
+                            0x6741d18c1ce6b0f6L, 0xde2020ef37d8da3L, 0x630739ac5e2883daL, 0x83bcdf6f8bda749cL, 0x84af784af788420L,
+                            0x67b9ce7b9cf739eeL, 0xa12bde210820b20cL, 0xab39bdce7b8214d6L, 0x90820830852ab39bL, 0x8b9ee630d2784d27L,
+                            0xeb75a946317b9d2L, 0x8c566a1349e42082L, 0xb37bc6b39ca2e7b9L, 0xa0e528862083add6L, 0x7c1cf741ee404e52L,
+                            0x218820b70e67c1d0L, 0xd07b9015a528394aL, 0x31c5aab49c2b49bdL, 0xb0e62a0e62906208L, 0x95a367c1d28c1ee6L,
+                            0x8398a418820ef37aL, 0xb49ca307b9ac5a92L, 0x3bcdeb38bdaL}),
+                    new UIntPackedArray(3, new long[]{
+                            0x0L, 0x0L, 0x490000000000000L, 0x240000000L, 0x1000000000L,
+                            0x4100000000000000L, 0x400000L, 0x4900004820924L, 0x12082490400000L, 0x1000000001240L,
+                            0x1000L, 0x6d80006130L, 0x24000186c00c0003L, 0x1200000201000001L, 0x834000006900006L,
+                            0x492492586800c0L, 0x4924900100124924L, 0x400492490012492L, 0x9240049249249240L, 0x4924924900100124L,
+                            0x2400400492490012L, 0x10010000009L, 0x50000061300000L, 0x205249001200005L, 0x30c00c001b61b600L,
+                            0x6d86d800061b0cL, 0x4000207238c31230L, 0x2400402010012412L, 0xa040049049000061L, 0x41a4000204949100L,
+                            0x61a4c34c20d001aL, 0xd30a340069069000L, 0x2492492492606938L, 0x9249249249249249L, 0x4924924924924924L,
+                            0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L,
+                            0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x1000000924924924L, 0x6130000000000100L,
+                            0xda00000568400000L, 0x140140000184eda2L, 0x8149240048000L, 0x492db20000528500L, 0xc001b61b60002052L,
+                            0x6d800061b0c30c00L, 0x86ebaeba030006d8L, 0xc48c001b61b60001L, 0x6d86d800081c8e30L, 0x207238ebb23000L,
+                            0x40201001241240L, 0x4004904900006124L, 0x2400018495a15a80L, 0x1252440281001241L, 0xaa04004904900008L,
+                            0xa41a400020494915L, 0x61a4c34c20d001L, 0xad3a834006906900L, 0x1a41a400018693L, 0x9000081a4e34c28dL,
+                            0x6938d3aa34006906L, 0x9249249249249260L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L,
+                            0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L,
+                            0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L,
+                            0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L,
+                            0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x924924924L}),
+                    new int[]{0, 1, 0, -1, -1, 0, -1, -1, 0, -2, -2, -2, -1, -1, 2, 1, 0, -1, -1, -2, -2, -2, -1, -2, -2, -2, -2, -2, -1, -2}),
+            new EncodedParametricDescription(2, true,
+                    new UIntPackedArray(6, new long[]{
+                            0xaaaaaaaaaaaaa381L, 0xaaaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaaaaaaL, 0x2aaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaa8f3cL,
+                            0xaaaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaaaaaaL, 0x40aaaaaaaaaaaaaaL, 0xaaaaaaaaaaaaa810L, 0xaaaaaaaaaa38eaaaL,
+                            0xaaaaaaaaaaaaaaaaL, 0x3c2aaaaaaaaaaaaaL, 0xaaaaa8f3aaaaa145L, 0xaaaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaaaaaaL,
+                            0x76c3aaaaaaa85a85L, 0xaaaaaa9b3aa3aa1cL, 0xaaaaaaaaaaaa3aaaL, 0x7aaaaaaaaa3aaaaaL, 0x81040aaaaaaa9ba8L,
+                            0xaaaaaaa813ea3aa0L, 0xaaaaaaaaaaa8e38eL, 0x81aaaaaaaaa3eaaaL, 0x82040aaaaaaa81aL, 0xeaaaaaaa813ea3eaL,
+                            0xaaaaaaaaaaaa8e3cL, 0xa82aaaaaaaaa3eaaL, 0x55c53c2aaaaaaa81L, 0xaa3cfaaaa8f3eaa8L, 0xaaaaaaaaaaaaaaaaL,
+                            0x7a973ceaaaaaaaaaL, 0x868063c4a8ea8e3dL, 0xaaa48faaaa9204e3L, 0xaaaa38eaaaaaaa8eL, 0xa0aa004ea8eaaa3aL,
+                            0x3871c76c3a8ea8e4L, 0xa3aa6dbaaaa9b3cfL, 0xaaaaa3aaaaaa8eaaL, 0x79ea873cfa8eaaa3L, 0xf3c78476c3a8ea8fL,
+                            0x8e3aa79baaaa9e04L, 0x3eaaaa3ceaaaa8eaL, 0xf7a6aa104fa8faaaL, 0x4e381081040a8ea8L, 0x38e38e041aaaa811L,
+                            0xa3eaaaa38eaaaa8eL, 0x85048a88150a8faaL, 0x1d0408888040a90aL, 0xe39038e201aaaa88L, 0xaa16aaaa410aaaa8L,
+                            0xa85224aa41d0a85aL, 0x11453c2082040a90L, 0x8f38e3ce041aaaa8L, 0xaaa3eaaaa3ceaaaaL, 0xa85208a82145a8fL,
+                            0x881c5142882040a9L, 0xa8f3903ce201aaaaL, 0x5aaa16aaaa150aaaL, 0x90a85224aa21c5a8L, 0xa8f3eaa855c53c2aL,
+                            0xaaaaaaaaaa3cf3eaL, 0xaaaaaaaaaaaaaaaaL, 0xa8fa8f3d7a9714faL, 0xea8f6cea898c53c2L, 0xaaa8e3aaaaa5556cL,
+                            0x38e3aaa8e38e38eaL, 0x43813815633a31c1L, 0x4e39204e3868063cL, 0xa8eaaaa8eaaa48f0L, 0xf38ea8e38e3aa38eL,
+                            0xc43cf3cf4a03e004L, 0x4f39204f38a8063L, 0xfa8ea8e38eaaa755L, 0x813cf38e38f3ce3cL, 0x6c33c13c17603e00L,
+                            0xb3cf39b3cf3871c7L, 0xaa3aaa8eaaa3aa6dL, 0x14538e38e38eaaa3L, 0x76c3a8f38579e387L, 0x1c6c539b6c538b2cL,
+                            0x40e3aaa903aa3aa7L, 0xb1c741040e39038eL, 0x476c33814077e740L, 0x79b04f3de04f3c78L, 0xa3ce38ea8ea8e3aaL,
+                            0x610453cf38f3cf3aL, 0x8476c33cf1457a61L, 0xa7dc0453de0453cbL, 0xce14f38ea9038e3aL, 0x16108714540f3c53L,
+                            0x10810403c11477e6L, 0x8e04114e38114e38L, 0x38e38e38e38e38e3L, 0x83885d63cf38f3ceL, 0x8c1010403963d704L,
+                            0x38e30c1913811913L, 0x145145138e39144eL, 0x2546582849244f3dL, 0x4088880404684a03L, 0x38e2011d04081d0L,
+                            0x5040e41039038e39L, 0x2245a41d61453851L, 0x640d8880405965d7L, 0x5038e34c1d64081dL, 0x1565915963903914L,
+                            0x3645a48685d7445L, 0x453c20820405a85eL, 0x38e3ce0411453c11L, 0xf3cf38e3ce3ce38fL, 0xd72083c25d73cf3cL,
+                            0x1973c41020403963L, 0x244e3ce30c1973c1L, 0x8f3d24514913ce39L, 0x4a03654848204924L, 0x81c5142882040468L,
+                            0x8f3903ce2011c514L, 0x3c514540e1503d03L, 0x65d72245e21d7145L, 0x481d714488204059L, 0x3924503ce34c1d71L,
+                            0x74851575915d63d0L, 0xa85e03645e28605dL, 0xa8f3eaa855c53c25L, 0xaaaaaaaaaa3cf3eaL, 0xaaaaaaaaaaaaaaaaL,
+                            0xa8fa8f3d7a9714faL, 0xe38f3eaa855c53c2L, 0x8e3aaaaaaaa3cf48L, 0x3aa38ea8e38eaaa3L, 0x239b39b3d739719bL,
+                            0xcea8f6cea898c53cL, 0xaaaa8e3aaaaa5556L, 0x138e3aaa8e38e38eL, 0xc23813815633a31cL, 0x78f38f6cea898c53L,
+                            0xe38e38e3aaaaa555L, 0xc13ce3cea8f3cf38L, 0x3c43c13c15633e31L, 0xf04e39204e386806L, 0x8ea8eaaaa8eaaa48L,
+                            0x4f38ea8e38e3aa3L, 0x63c43cf3cf4a03e0L, 0x8f21041204e38680L, 0x38e3903aaa8eaaa4L, 0x21b40e39039040eL,
+                            0x63c415b15b4a016L, 0x75504f39204f38a8L, 0xe3cfa8ea8e38eaaaL, 0xe00813cf38e38f3cL, 0x8063c43c13c17603L,
+                            0xa75520541204f38aL, 0x4f3cf39038e38eaaL, 0x16008114f3d03851L, 0x71c76c3141141760L, 0xaa6db3cf39b3cf38L,
+                            0xaaa3aa3aaa8eaaa3L, 0xe38714538e38e38eL, 0x871c76c3a8f38579L, 0x3aa6db49245b3cf3L, 0x138e3aa44e38eaaaL,
+                            0x9e44718644e45139L, 0x38b2c76c339b4467L, 0xa3aa71c6c539b6c5L, 0x9038e40e3aaa903aL, 0x7e740b1c741040e3L,
+                            0x538b2c76c3381407L, 0xaa3aa71c79745b6cL, 0x3963cf40e44e3903L, 0x77e758b1c7590591L, 0x4f3c78476c33c158L,
+                            0xa8e3aa79b04f3de0L, 0xf3cf3aa3ce38ea8eL, 0x457a61610453cf38L, 0x4f3c78476c33cf1L, 0xea8e3aa79b21249eL,
+                            0x523d240e3ce45038L, 0x5c67a65e120648f4L, 0xe0453cb8476c315bL, 0x9038e3aa7dc0453dL, 0x40f3c53ce14f38eaL,
+                            0x11477e6161087145L, 0x9e0453cb8476c33cL, 0x39038e3aa7dc2174L, 0x55923d714f14f450L, 0x415c77e65e10875cL,
+                            0x38114e3810810401L, 0xe38e38e38e04114eL, 0xcf38f3ce38e38e38L, 0x3963d70483885d63L, 0x34c114e381081040L,
+                            0xd34ce38e38e04125L, 0x54f4d53d34d338e4L, 0x4e95630484c88e9L, 0x9138119138c10104L, 0x38e39144e38e30c1L,
+                            0x849244f3d1451451L, 0x404684a032546582L, 0x2984c119138c1010L, 0x14d34d144e38e30cL, 0x287526153d861845L,
+                            0x406287603256258L, 0x11d04081d0408888L, 0x1039038e39038e20L, 0x1d614538515040e4L, 0x80405965d72245a4L,
+                            0x12d45081d040888L, 0x4104d44ce39038e2L, 0x42e92454c9154513L, 0x880406696a322466L, 0x34c1d64081d640d8L,
+                            0x159639039145038eL, 0xa48685d744515659L, 0x8880405a85e03645L, 0xe34c2d95081d640dL, 0x585964d44d145038L,
+                            0x6648686976091596L, 0x20820406686a0364L, 0xce0411453c11453cL, 0x38e3ce3ce38f38e3L, 0x83c25d73cf3cf3cfL,
+                            0xc20820403963d720L, 0x3ce0412495411453L, 0x54d33ce5534cf38eL, 0x85428e354f5553dL, 0x3c41020404e95632L,
+                            0xe3ce30c1973c1197L, 0xd24514913ce39244L, 0x36548482049248f3L, 0x73c41020404684a0L, 0x4e3ce30c29a54119L,
+                            0x3dd6184915534d24L, 0x365744820752755L, 0xc514288204062876L, 0x3903ce2011c51481L, 0x514540e1503d038fL,
+                            0xd72245e21d71453cL, 0x1c51428820405965L, 0xf3903ce2012c9248L, 0x491495131505544cL, 0x6a32246a22e32455L,
+                            0x81d7144882040669L, 0x924503ce34c1d714L, 0x4851575915d63d03L, 0x85e03645e28605d7L, 0x481d71448820405aL,
+                            0x4d24503ce34c2da2L, 0x774915a6585d6554L, 0x686a03646a286069L, 0x6L}),
+                    new UIntPackedArray(3, new long[]{
+                            0x0L, 0x0L, 0x0L, 0x9000000000000000L, 0x24000000004L,
+                            0x0L, 0x10000L, 0x0L, 0x4000004100L, 0x9240000000000400L,
+                            0x4900004820L, 0x2490000410000080L, 0x1240001208L, 0x104000020L, 0x100L,
+                            0x80000c30004c0000L, 0x6c00030000006dL, 0x4000030c001b0c06L, 0x10002010000012L, 0x900000c200048201L,
+                            0x4004c00834000006L, 0x924924308001a080L, 0x800900124924004L, 0x2492490412412410L, 0x200240049249001L,
+                            0x4924924104904904L, 0x80090012492400L, 0x1249249041241241L, 0x4020024004924900L, 0x100000010490490L,
+                            0x10L, 0x5000000c30004cL, 0x9201249001200005L, 0xb61b600024900814L, 0xdb0db61b0c00c001L,
+                            0x6d86d80006db0186L, 0xc6e36dc6c3123000L, 0x1241240001c70061L, 0x4924920104020100L, 0x4904900000d2010L,
+                            0x124924a45100a040L, 0x1a41a4000244804L, 0x6924926134c20d0L, 0x6906900006d201L, 0x41a49249c4d30a34L,
+                            0x924924924925c480L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L,
+                            0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L,
+                            0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L,
+                            0x9249249249249249L, 0x1001000000L, 0xc30004c00000000L, 0xda00000568400000L, 0x2bac0a13a2d16d02L,
+                            0x48000140140000L, 0x924020524804924L, 0x2db2000052850000L, 0x249008149251249L, 0xb0c00c001b61b600L,
+                            0x6db0186db0db61L, 0x6eba030006d86d80L, 0x1b6c061b6eb6ddL, 0x1b0c48c001b61b60L, 0x71c01871b8db7L,
+                            0xc6ebb230006d86d8L, 0x1c70061c6e36dL, 0x104020100124124L, 0xd2010492492L, 0xad415a8040049049L,
+                            0x40002b4804124924L, 0x2914402810012412L, 0x9000091201049249L, 0x4a4515aa04004904L, 0xa400024480412492L,
+                            0x926134c20d001a41L, 0x6900006d20106924L, 0x249d4d3a83400690L, 0x1a40001b48041a49L, 0x4927134c28d001a4L,
+                            0x690000712010692L, 0x9249c4d3aa340069L, 0x24924925c48041a4L, 0x9249249249249249L, 0x4924924924924924L,
+                            0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L,
+                            0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L,
+                            0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L,
+                            0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L,
+                            0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L,
+                            0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x0L}),
+                    new int[]{0, 1, 0, -1, -1, 0, -1, -1, 0, -2, -2, -2, -1, -1, 2, 1, 0, -1, -1, -2, -2, -2, -1, -1, -2, -2, -2, 0, -2, -2, -1, -2, -2, -2, -1, -2, -1, -1, -2, -2, -2, -2})
+    };
     protected static final Map<Integer, EncodedParametricDescription> EXCL_TRANSPOSITION_BY_DEGREE = new HashMap<>();
     protected static final Map<Integer, EncodedParametricDescription> INCL_TRANSPOSITION_BY_DEGREE = new HashMap<>();
 
     static {
-        EXCL_TRANSPOSITION_BY_DEGREE.put(1, new EncodedParametricDescription(1, false,
-                new UIntPackedArray(3, new long[]{0xbb6d56922db55b69L, 0x6ab6d45220924526L, 0x848249051ae93593L, 0x11a20a444L}),
-                new UIntPackedArray(2, new long[]{0x5554a00001500000L, 0x55557a0283c00015L, 0x155555L}),
-                new int[]{0, 1, 0, -1, -1}
-        ));
+        for (EncodedParametricDescription description : ENCODED_PARAMETRIC_DESCRIPTIONS) {
+            if (description.doesInclTransposition()) {
+                INCL_TRANSPOSITION_BY_DEGREE.put(description.getAutomatonDegree(), description);
 
-        EXCL_TRANSPOSITION_BY_DEGREE.put(2, new EncodedParametricDescription(2, false,
-                new UIntPackedArray(5, new long[]{0xef7bdef7bdef78a1L, 0xdef7bdef7bdef7bdL, 0xbdef7bc630bdef7bL, 0x7bdef7bdef7bdef7L, 0xf0420f7bdef7bdefL,
-                        0xef7bdef7bdef14beL, 0xdef7bdef7bdef7bdL, 0xbc6f17def78e730bL, 0x7bdef7bdef7bde3fL, 0x297de420e3f7bdefL, 0xef7bdef78fef1fc5L,
-                        0x21083def7bdef7bdL, 0xbde0fbc1f18a52f8L, 0x7bdef7bdef7bde2fL, 0xf07c6318be10820fL, 0xef7bdef78bef783eL, 0xdef1d2730bdef7bdL,
-                        0xbdef1bde498a6f1bL, 0xa4c429bdef7bdef7L, 0xf79612d0a12fbc95L, 0x6f7bdef7bde2f8b4L, 0xc7298a5f210838caL, 0xbdef17def1fde498L,
-                        0x17c8620e329fdef7L, 0x2f8a9f7961324c13L, 0x1080a7f7bdef7bc5L, 0xde51e2129ca52854L, 0x7def7bdef14a5287L, 0xaa28894aa6a82088L,
-                        0xf7bc58962af79a88L, 0x62884208221f7bdeL, 0xa5287de51ce131ccL, 0x820887def7bdef18L, 0x79a83a8e8398a218L, 0xf7bdef7bc68962afL,
-                        0x6f1bdef1d2730a21L, 0xdef7bdef18de49ccL, 0xbdb71cc231bdef7bL, 0x97d9395c8098a7f7L, 0x31039f17c5f17c52L, 0x5584d4284bef2569L,
-                        0xbef14bef78be2d02L, 0xc12fbce5a4c4318L, 0x97c5314ba099620dL, 0xf210838c39297c62L, 0xef1cc549ce7298a5L, 0xe331ca52fbdef17dL,
-                        0x5c841e27297cf7a0L, 0xc4a5f17d1297db3cL, 0x304c5f218838c3b2L, 0xef14be2a426584e9L, 0xcf620e331cc5294bL, 0x4ae09d62424e1317L,
-                        0x803b344a6297d131L, 0x5266129ca5285410L, 0x5294a5294a5284e5L, 0x49294bc80420984aL, 0x8b2948bc4ca0be86L, 0xa9aa083bc2c8b22cL,
-                        0x8a9116a26a8a2252L, 0x986252c62529625L, 0xaceaa68894b06a82L, 0x8b38c8b29ca3044dL, 0x1cc628842083bc8cL, 0x298a5284e6525213L,
-                        0x420820984c6314a5L, 0xbc4d20b58689318aL, 0x3bc350d22c8b4948L, 0xa12a3a0e62886208L, 0x3462529a258a9076L, 0x8398a418820984e6L,
-                        0xb49ca30425ac5a92L, 0xd2730bbc3d0d38c8L, 0x18de49cc6f1bdef1L, 0x31bdef7bdef7bdefL, 0x939bc6f7bc749cc2L, 0xa5294bef7bc6a152L,
-                        0xfdef6dc7308e6294L, 0x14a5f64e57202629L, 0x71cc20e7c5f17c5fL, 0x9499c8098a7f7bdbL, 0x39298a6298a5297dL, 0x4d4284bef2569310L,
-                        0x14bef78be2d02558L, 0x2fbc95a4c4318befL, 0xe2f8b45456a3d0a1L, 0x69310e6894b1894bL, 0x82658834304bef39L, 0xe4a5f18a5f14c52eL,
-                        0xd0c12fbce5a4c40L, 0x7898a5314ba51d62L, 0xa5f210838c39898aL, 0x7def1cc549ce7298L, 0x20e331ca52fbdef1L, 0xa492949ca6297c84L,
-                        0x794a45294a5f7bc7L, 0x789ca5f3de838ceL, 0x7c5f44a5f6cf1721L, 0x97cf7a0e30ecb129L, 0x297db4cdc841e272L, 0x838c3b94e46298b1L,
-                        0x26584e9304c5f218L, 0xcc5294bef14be2a4L, 0xa4c1317c8620e331L, 0x894a52f8a95516a4L, 0x5f3d8838ce7a4a51L, 0xc52b82758909384cL,
-                        0xe30ecd1298a5f44L, 0x2562424e1317cf62L, 0xa4e47898b1314ae5L, 0x129ca5285410803bL, 0xa5294a5284e55266L, 0x4a150420984a5294L,
-                        0x94a1dd54ec04a729L, 0x8301ad6b5ad6a52L, 0x282fa1924a52f201L, 0xb22c8b22ca522f13L, 0x649294bc80420ef0L, 0xdab2948bc75a0be8L,
-                        0x2a9aa083bcadab6aL, 0x58a9116a26a8a225L, 0x20986252c6252962L, 0xdafc2a28894aa6a8L, 0xd6b7bd6a58962a7dL, 0x9a2252c1aa08301bL,
-                        0x22ca728c1136b3aaL, 0xb06a820ef2322ce3L, 0xa307e1aceaa68894L, 0x83bcbdab8bdab29cL, 0x5252131cc6288420L, 0x6314a5298a5284e6L,
-                        0xc7318a210820984cL, 0x6a6294a1de54e704L, 0x908208301ce735adL, 0x2f13482d61a24c62L, 0xef0d4348b22d252L, 0xb58689318a42082L,
-                        0xb36adab4948bc76aL, 0xa0e628862083bcceL, 0x29a258a9076a12a3L, 0x218820984e634625L, 0x2a7edaf728e8398aL, 0x301de737bd6a6896L,
-                        0xb16a4a0e62906208L, 0x34e322d2728c1096L, 0x8398a418820ef0f4L, 0xb49ca307b9ac5a92L, 0x3bcdeb38bdaL}),
-                new UIntPackedArray(3, new long[]{0x0L, 0x0L, 0x490000000000000L, 0x48L, 0x8000000000L, 0x4800000000000000L, 0x2L, 0x20020104920924L,
-                        0x412482490000000L, 0x8008L, 0x9808000L, 0x361b6000006000L, 0x2000018000000618L, 0x8000009049L, 0x6180034134800006L,
-                        0x9249249258000002L, 0x4924000004924024L, 0x12490092492492L, 0x249249249249000L, 0x4924924000004924L, 0x12490092492L,
-                        0x10098080000009L, 0x2200000060000000L, 0x201041049005028L, 0x801861b0d86d8000L, 0xc381b6000006180dL, 0x207037047186L,
-                        0x2400080012090492L, 0x48241248000061L, 0x4d20000204941029L, 0x6124d809861a0d0L, 0x271868341348000L, 0x2492492492604937L,
-                        0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L,
-                        0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x8000000924924924L, 0x6000000000100980L,
-                        0x8000542602000000L, 0xa0880000018b6db6L, 0x8041041240140L, 0xcb2c900502822000L, 0x1b0d86d8000020b2L, 0x6000006180d80186L,
-                        0x876b7686186c361bL, 0x1c61b0e06d800001L, 0x81b60000081c0dc1L, 0x2072b72c7186c3L, 0x8001209049200L, 0x4824124800006124L,
-                        0x2000018495b6a000L, 0x125040a401209049L, 0x9004824124800008L, 0x4d2000020494b2aL, 0x6124d809861a0dL, 0x76a6186834134800L,
-                        0xa0d04d2000018493L, 0x800008124dc09c61L, 0x49372a7186834134L, 0x9249249249249260L, 0x4924924924924924L, 0x2492492492492492L,
-                        0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L,
-                        0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L,
-                        0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L,
-                        0x9249249249249249L, 0x924924924L}),
-                new int[]{0, 1, 0, -1, -1, 2, 1, 0, -1, -1, 0, -2, -2, -1, -2, -2, -1, 0, -1, -1,
-                        -1, -2, -2, -2, -2, -2, -2, -2, -1, -2}
-        ));
-
-        INCL_TRANSPOSITION_BY_DEGREE.put(1, new EncodedParametricDescription(1, true,
-                new UIntPackedArray(3, new long[]{0x6cb6c48db6cb6db1L, 0x8a488251231273dbL, 0x473c49cc93b2db6cL, 0x829222d84825120aL, 0x2c88L}),
-                new UIntPackedArray(2, new long[]{0x52a0000015000000L, 0xa02a0fc000055555L, 0x555555555555eL}),
-                new int[]{0, 1, 0, -1, -1, -1}
-        ));
-
-        INCL_TRANSPOSITION_BY_DEGREE.put(2, new EncodedParametricDescription(2, true,
-                new UIntPackedArray(6, new long[]{0xaaaaaaaaaaaaa141L, 0xaaaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaaaaaaL, 0x2aaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaa8618L,
-                        0xaaaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaaaaaaL, 0x40aaaaaaaaaaaaaaL, 0xaaaaaaa8516aa810L, 0xaaaaaaaaaaaaaaaaL, 0xaaaaaaaaaaaaaaaaL,
-                        0x182aaaaaaaaaaaaaL, 0xa1aa16aaaaaaa208L, 0xaaaaaaaaaaaaaaaaL, 0x22aaaaaaaaaaaaaaL, 0x91c3aaaaaaaaa22aL, 0xaa1ea145145aaa24L,
-                        0xaaaaaaaaaaaaaaaaL, 0xa26aaaaaaaaaaaaaL, 0x81040aaaaaaaaa1eL, 0xa8506a18518516a0L, 0xaaaaaaaaaaaaaaaaL, 0x6a06aaaaaaaaaaaaL,
-                        0x82040aaaaaaaaa0L, 0xaa8506a18618616aL, 0xaaaaaaaaaaaaaaaaL, 0x6a0aaaaaaaaaaaaL, 0x83c8182aaaaaaaaaL, 0xaaaaa1aa1aaaaaa8L,
-                        0xaaaa861aaaaaaaaaL, 0x63ea3c616aaaaaaaL, 0x8a7ca184a85a85a8L, 0x145a8540504516aaL, 0xaaaaa901aaaaa16aL, 0x907ea7c116aaaaaaL,
-                        0xa892491c3a85a85aL, 0x516aaaa1c6185145L, 0xaaaaaa871eaaaa14L, 0xa9146a2461aaaaaaL, 0x5a898091c3a85a86L, 0x85185a8544604618L,
-                        0xaaaaaaa911eaaaa1L, 0x6a919aa8011aaaaaL, 0x85141081040a85a8L, 0x1851451450452051L, 0xaaaaaaaa8106aaaaL, 0x88a812ea2c832aaaL,
-                        0x20514b84b040a8caL, 0xa20530c14c2cc24cL, 0xaaaaaaaaa8b06aaaL, 0xa88a8b8ea8c932aaL, 0x6186142082040a8cL, 0xaa18618514504820L,
-                        0xaaaaaaaaaa8106aaL, 0xca88a8b2ea08822aL, 0x48206142842040a8L, 0xaaa20620c14c2c82L, 0xaaaaaaaaaaa8b06aL, 0x8ca88a8b8ea84922L,
-                        0x1aaaaaa883c8182aL, 0x6aaaaaaaaaaaa1aaL, 0xaaaaaaaaaaaa8618L, 0xa86a86a863ea3c81L, 0x51eaaaaa92888182L, 0x4716a14514516a18L,
-                        0x6a145145aaaa996L, 0x4141141159885889L, 0x504516aa8a7ca18L, 0x18114516a145a854L, 0x1185a8516aa85a90L, 0x841861861507c67cL,
-                        0x40604516aa937ca1L, 0xd641185185186145L, 0xc2045146185a85a9L, 0x1c318118119d7c67L, 0xa1c6185145a89249L, 0x871c618514516aaaL,
-                        0x248205145aaa16aaL, 0x91c3a86148151445L, 0x6a1c81c5145a9450L, 0xa9e78720530c3051L, 0xc50924530c14516aL, 0x91c31413093259cL,
-                        0xa85446046185a898L, 0x5a911c1186185185L, 0x8880120614616a14L, 0x8091c31862081919L, 0x6145448046185a94L, 0x45aa578120620c20L,
-                        0x9888022463081851L, 0x1081040181209225L, 0x4514504520518514L, 0x1451410481451851L, 0x12c52cf386145145L, 0x5510104014e18f18L,
-                        0x34d34504d2851851L, 0xd14515554a34540dL, 0x1590d91fa0634d34L, 0x14b84b04036841f4L, 0x530c14c2cc24c205L, 0x514c14b04930c20L,
-                        0x20b8ce8c938814c3L, 0x515684b04038e3cfL, 0xcd38e34c2ce24c20L, 0x38d14c15654938c3L, 0xf3d68ce8e0a0834eL, 0x861420820403a83dL,
-                        0x1861851450482061L, 0x6145185141048206L, 0x8f18b2c608f3c618L, 0x18614410204014e1L, 0x641040d34504f286L, 0x1034d18515554a3cL,
-                        0x41f41691011f7c64L, 0x8206142842040368L, 0x820620c14c2c824L, 0x18830518c14b0492L, 0xe3cf20b8cf8493c8L, 0x4820614484204038L,
-                        0x3c83d03ce34c2cf2L, 0x840f38d18c156549L, 0xa83df3d68cf8607cL, 0x1aaaaaa883c81823L, 0x6aaaaaaaaaaaa1aaL, 0xaaaaaaaaaaaa8618L,
-                        0xa86a86a863ea3c81L, 0xa1aaaaaa883c8182L, 0x90145aaaaaaaaa1aL, 0x1c51451451451461L, 0x21471471463c53caL, 0x851eaaaaa9288818L,
-                        0x64716a14514516a1L, 0x906a145145aaaa99L, 0x8214114115988588L, 0x1851eaaaaa928881L, 0x965118514514516aL, 0x8904518618614515L,
-                        0x1841811811998868L, 0x540504516aa8a7caL, 0x9018114516a145a8L, 0x7c1185a8516aa85aL, 0xa1841861861507c6L, 0x8540504516aa8a7cL,
-                        0x15018b30c16a145aL, 0x87cb1cc14c30514cL, 0xca1842072073107cL, 0x14540604516aa937L, 0x5a9d641185185186L, 0xc67c2045146185a8L,
-                        0x7ca18418118119d7L, 0x614540604516aa93L, 0x4c15d64b20c18518L, 0x7c87c204c1882061L, 0x92491c320120121dL, 0x6aaaa1c6185145a8L,
-                        0x16aa871c61851451L, 0x1445248205145aaaL, 0x892491c3a8614815L, 0x16aaaa1c6185145aL, 0x53451471d040d145L, 0x5144d24a28d34d14L,
-                        0xa945091c314734a3L, 0xc30516a1c81c5145L, 0x4516aa9e78720530L, 0x3259cc50924530c1L, 0x5a945091c3141309L, 0xc30516a1c81c514L,
-                        0x18634515e7913cd3L, 0x93a59ce50924d38eL, 0x85a898091c318138L, 0x185185a854460461L, 0x616a145a911c1186L, 0x819198880120614L,
-                        0x185a898091c31862L, 0x185185a85446046L, 0x5030534c1511cb41L, 0x3ca41198f80b2903L, 0x6185a948091c3207L, 0x620c20614544804L,
-                        0x308185145aa57812L, 0x1209225988802246L, 0x46185a948091c318L, 0x3d020c2061454480L, 0x38f20634c16578bL, 0x13c93e598f80225L,
-                        0x2051851410810402L, 0x8145185145145045L, 0x8614514514514104L, 0x14e18f1812c52cf3L, 0x5205185141081040L, 0x525d718514514504L,
-                        0xa595d75d75d75c10L, 0x5e96626412d72e2L, 0x4d28518515510104L, 0x54a34540d34d3450L, 0xfa0634d34d145155L, 0x4036841f41590d91L,
-                        0x4d2851851551010L, 0x555369740d34d345L, 0x1fa1969a69a5d75dL, 0x406a875f75591a9L, 0xc2cc24c20514b84bL, 0x4b04930c20530c14L,
-                        0x8c938814c30514c1L, 0xb04038e3cf20b8ceL, 0x4c2cc24c20514b84L, 0x5cb05461820530c1L, 0xb8d4a525d86175d8L, 0x4b0406e972248b8dL,
-                        0x34c2ce24c2051568L, 0xc15654938c3cd38eL, 0xce8e0a0834e38d14L, 0x84b0403a83df3d68L, 0xe34c2ce24c205156L, 0xd85d65546d83cd38L,
-                        0x8db8e0a1269b6da5L, 0x20820406e871f716L, 0x8514504820618614L, 0x1851410482061861L, 0xb2c608f3c6186145L, 0x4208204014e18f18L,
-                        0x1851450482061861L, 0x76575c1052499186L, 0x4b2d90a28996595dL, 0x1441020405e96626L, 0x40d34504f286186L, 0x4d18515554a3c641L,
-                        0x41691011f7c64103L, 0x614410204036841fL, 0x1040d34504f28618L, 0x69a6575d55537194L, 0xf75691d11f7d975dL, 0x61428420406a875L,
-                        0x20620c14c2c82482L, 0x830518c14b049208L, 0xcf20b8cf8493c818L, 0x20614284204038e3L, 0x220620c14c2c8248L, 0x526176585cb05449L,
-                        0x72248b8dc8548926L, 0x82061448420406e9L, 0xc83d03ce34c2cf24L, 0x40f38d18c1565493L, 0x83df3d68cf8607c8L, 0x482061448420403aL,
-                        0x7123d03ce34c2cf2L, 0x275c6da6585d6554L, 0xe871f7168dc8607dL, 0x6L}),
-                new UIntPackedArray(3, new long[]{0x0L, 0x0L, 0x0L, 0x9000000000000000L, 0x4804L, 0x0L, 0x400000L, 0x0L, 0x124800L, 0x9240000000000000L,
-                        0x4824920L, 0x2490000082000000L, 0x1209248L, 0x20800000L, 0x4000L, 0xc3000098000L, 0x186c30db60L, 0x30c00036000L, 0x490002492L,
-                        0x800000c200009000L, 0x124c309a4L, 0x9249243080003400L, 0x120024924924L, 0x2492490410482480L, 0x48009249249L, 0x4924924104120920L,
-                        0x12002492492L, 0x9249249041048248L, 0x4800924924L, 0x4000000010412092L, 0x8000000080000000L, 0x100000000c300009L, 0x8249000028249201L,
-                        0x36d8000024920102L, 0xdb0d80c00db61b0cL, 0xdb6000006db6030L, 0x38e37030036dc6e3L, 0x249200001c7180cL, 0x924804000924900L,
-                        0x924800000d2402L, 0x8249291000249252L, 0xc26920000244900L, 0x20d24984c00d2493L, 0xe309a4800006d240L, 0x834927130034924L,
-                        0x924924924925c490L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L,
-                        0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L,
-                        0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x8000000040000000L, 0xc30000980000000L,
-                        0x2b40000010000000L, 0x2bae814276db6da0L, 0xa09248044000000L, 0x9248040a0924000L, 0x296492011000000L, 0x2492010296492daL,
-                        0xdb61b0c36d8000L, 0x6db6030db0d80cL, 0xa036d86c30db6000L, 0x1b6d80c36eb76bL, 0xc00db71b8c36d800L, 0x71c6030e38dc0L,
-                        0xba036dc6e30db600L, 0x1c7180c38e372L, 0x4000924900024920L, 0xd2402092480L, 0x55a0249240009248L, 0x2b490082492bL, 0x4400092494802492L,
-                        0x800009124020924aL, 0x915a024925200924L, 0x2000024490082492L, 0x984c00d24930c269L, 0x4800006d24020d24L, 0x2753a034924c309aL,
-                        0x9200001b49008349L, 0x49c4c00d24938c26L, 0xa4800007124020d2L, 0x92713a034924e309L, 0x24924925c4900834L, 0x9249249249249249L,
-                        0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L,
-                        0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L,
-                        0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L,
-                        0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L,
-                        0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x4924924924924924L, 0x2492492492492492L, 0x9249249249249249L, 0x0L}),
-                new int[]{0, 1, 0, -1, -1, 2, 1, 0, 0, -1, -1, 0, 0, -1, -1, -1, -1, -1, -2, -2, -2, -1, -1, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -2,
-                        -1, -1, -2, -2, -2, -2, -2}
-        ));
+            } else {
+                EXCL_TRANSPOSITION_BY_DEGREE.put(description.getAutomatonDegree(), description);
+            }
+        }
     }
 
     /**
      * Returns precomputed encoded parametric description of the Levenshtein-automaton
      * for the specified parameters.
      *
-     * @param degree             a degree of the Levenshtein-automaton.
-     *                           {@code DefaultEncodedParametricDescriptionFactory}
-     *                           returns description if {@code degree} is equal to {@code 1}
-     *                           or {@code 2} only.
+     * @param degree            a degree of the Levenshtein-automaton.
+     *                          {@code DefaultEncodedParametricDescriptionFactory}
+     *                          returns description if {@code degree} is equal to {@code 1}
+     *                          or {@code 2} only.
      * @param inclTransposition specifies whether parametric description is for the
-     *                           Levenshtein-automaton which support transposition
-     *                           as a primitive edit operation.
+     *                          Levenshtein-automaton which support transposition
+     *                          as a primitive edit operation.
      */
     public EncodedParametricDescription getEncodedParametricDescription(int degree, boolean inclTransposition) {
         return inclTransposition ? getInclTransposition(degree) : getExclTransposition(degree);

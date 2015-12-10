@@ -123,6 +123,10 @@ public final class CharacteristicVectorCodec {
         return result;
     }
 
+    public static String toBinaryString(int encodedVector) {
+        return Integer.toBinaryString(encodedVector).substring(1);
+    }
+
     private CharacteristicVectorCodec() {
     }
 }

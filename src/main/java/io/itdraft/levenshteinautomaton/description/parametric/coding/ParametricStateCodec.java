@@ -63,7 +63,7 @@ public class ParametricStateCodec {
                 minBoundary, minBoundary + relSubwordMaxLength);
         int index = (encodedCharacteristicVector - 1) * statesCount + stateId;
         int nextStateId = parametricDescription.getEncodedTransitionsTable().get(index);
-        int boundaryOffset = parametricDescription.getBoundaryOffsets().get(index);
+        int boundaryOffset = parametricDescription.getEncodedBoundaryOffsets().get(index);
 
         return encodeState(nextStateId, minBoundary + boundaryOffset, statesCount);
     }

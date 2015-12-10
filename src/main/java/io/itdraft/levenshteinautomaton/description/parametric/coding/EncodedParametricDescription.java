@@ -24,7 +24,7 @@ public class EncodedParametricDescription {
     private final boolean inclTransposition;
     private final int parametricStatesCount;
     private final UIntPackedArray encodedTransitionsTable;
-    private final UIntPackedArray boundaryOffsets;
+    private final UIntPackedArray encodedBoundaryOffsets;
     private final int[] degreeMinusStateLength;
 
     /**
@@ -49,7 +49,7 @@ public class EncodedParametricDescription {
         this.automatonDegree = automatonDegree;
         this.inclTransposition = inclTransposition;
         this.encodedTransitionsTable = encodedTransitionsTable;
-        this.boundaryOffsets = encodedBoundaryOffsets;
+        this.encodedBoundaryOffsets = encodedBoundaryOffsets;
         this.degreeMinusStateLength = degreeMinusStateLength;
         this.parametricStatesCount = degreeMinusStateLength.length;
     }
@@ -94,8 +94,8 @@ public class EncodedParametricDescription {
      * the encoded parametric states minimal boundary offsets
      * (a complement to the transitions table).
      */
-    public UIntPackedArray getBoundaryOffsets() {
-        return boundaryOffsets;
+    public UIntPackedArray getEncodedBoundaryOffsets() {
+        return encodedBoundaryOffsets;
     }
 
     /**
@@ -103,5 +103,67 @@ public class EncodedParametricDescription {
      */
     public int[] getDegreeMinusStateLength() {
         return degreeMinusStateLength;
+    }
+
+    @Override
+    public String toString() {
+        return toJavaString();
+    }
+
+    public String toJavaString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("new EncodedParametricDescription(")
+                .append(automatonDegree).append(", ")
+                .append(inclTransposition).append(", \n\t");
+
+        appendUIntPackedArray(sb, encodedTransitionsTable)
+                .append(", \n\t");
+
+        appendUIntPackedArray(sb, encodedBoundaryOffsets)
+                .append(", \n\t");
+
+        appendIntArray(sb, degreeMinusStateLength)
+                .append(")");
+
+        return sb.toString();
+    }
+
+    private StringBuilder appendUIntPackedArray(StringBuilder sb, UIntPackedArray arr) {
+        sb.append("new UIntPackedArray(")
+                .append(arr.getBitsPerValue()).append(", ")
+                .append("new long[]{");
+
+        final int[] i = {1};
+        arr.foreach((value, isFinal) -> {
+            sb.append("0x").append(Long.toHexString(value)).append("L");
+
+            if (!isFinal) {
+                sb.append(", ");
+
+                if (i[0]++ % 5 == 0) {
+                    sb.append("\n\t\t");
+                }
+            }
+        });
+
+        sb.append("})");
+
+        return sb;
+    }
+
+    private StringBuilder appendIntArray(StringBuilder sb, int[] arr) {
+        sb.append("new int[]{");
+
+        for (int i = 0, length = arr.length; i < length; i++) {
+            sb.append(arr[i]);
+
+            if (i != length - 1) {
+                sb.append(", ");
+            }
+        }
+
+        sb.append('}');
+
+        return sb;
     }
 }

@@ -29,7 +29,7 @@ import io.itdraft.levenshteinautomaton.description.parametric.coding.Characteris
   * @param asInt a characteristic vector represented as integer value.
   */
 protected[levenshteinautomaton]
-case class EncodedCharacteristicVector private(asInt: Int) extends CharacteristicVector {
+case class EncodedCharacteristicVector protected[coding](asInt: Int) extends CharacteristicVector {
 
   /**
     * Minimal index `j&#8712;{1, ..., k}` where `b<sub>j</sub>=1` in
@@ -42,6 +42,8 @@ case class EncodedCharacteristicVector private(asInt: Int) extends Characteristi
     * Size of the characteristic vector.
     */
   lazy val size = CharacteristicVectorCodec.size(asInt)
+
+  override def hashCode(): Int = asInt
 }
 
 protected[levenshteinautomaton]
