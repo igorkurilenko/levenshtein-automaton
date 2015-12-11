@@ -25,26 +25,26 @@ import io.itdraft.levenshteinautomaton.description.parametric.coding.{DefaultEnc
   * @note Lazy because it computes next state on every transition.
   *
   * @example {{{
-  *           val dictionaryWord: String = ...
-  *           val misspelledWord: String = ...
+  * val dictionaryWord: String = ...
+  * val misspelledWord: String = ...
   *
-  *           val automaton = LazyLevenshteinAutomaton(
-  *             misspelledWord,
-  *             degree = 2,
-  *             includeTransposition = true)
-  *           var state = automaton.initialState
+  * val automaton = LazyLevenshteinAutomaton(
+  *   misspelledWord,
+  *   degree = 2,
+  *   includeTransposition = true)
+  * var state = automaton.initialState
   *
-  *            // traverse
-  *            var i, cp = 0
-  *            while(i < dictionaryWord.length) {
-  *             cp = dictionaryWord.codePointAt(i)
-  *             state = automaton.nextState(state, cp)
-  *             i += Character.charCount(cp)
-  *           }
+  * // traverse
+  * var i, cp = 0
+  * while(i < dictionaryWord.length) {
+  *   cp = dictionaryWord.codePointAt(i)
+  *   state = automaton.nextState(state, cp)
+  *   i += Character.charCount(cp)
+  * }
   *
-  *           if(state.isFinal) println("Misspelled word is accepted.")
-  *           else println("Misspelled word is rejected.")
-  *          }}}
+  * if(state.isFinal) println("Misspelled word is accepted.")
+  * else println("Misspelled word is rejected.")
+  * }}}
   */
 class LazyLevenshteinAutomaton private(automatonConfig: LevenshteinAutomatonConfig) {
   private implicit val _ = automatonConfig

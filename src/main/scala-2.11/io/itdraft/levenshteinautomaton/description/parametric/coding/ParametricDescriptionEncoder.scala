@@ -153,15 +153,16 @@ object ParametricDescriptionEncoder {
     def encodeParametricDescription(parametricDescription: ParametricDescription) = {
       val (encodedTransitions, encodedBoundaryOffsets) =
         encodeParametricTransitionTable(parametricDescription)
-      val encodedEMinusStateLength = encodeEMinusStateLengthAddendums(parametricDescription)
+      val encodedDegreeMinusStateLengthAddendums =
+        encodeDegreeMinusStateLengthAddendums(parametricDescription)
 
       new EncodedParametricDescription(degree, inclTransposition,
         UIntPackedArray.pack(encodedTransitions),
         UIntPackedArray.pack(encodedBoundaryOffsets),
-        encodedEMinusStateLength)
+        encodedDegreeMinusStateLengthAddendums)
     }
 
-    def encodeParametricTransitionTable(parametricDescription: ParametricDescription): (Array[StateIdTransitFrom], Array[StateIdTransitFrom]) = {
+    def encodeParametricTransitionTable(parametricDescription: ParametricDescription) = {
       val statesCount = parametricDescription.parametricStatesCount
       val failureStateId = statesCount
       val encodedTransitions = Array.fill(statesCount * maxVectorAsInt)(failureStateId)
@@ -180,14 +181,23 @@ object ParametricDescriptionEncoder {
       (encodedTransitions, encodedBoundaryOffsets)
     }
 
-    def encodeEMinusStateLengthAddendums(parametricDescription: ParametricDescription) = {
+    /**
+      * This addendums are required for `ParametricStateCodec` to detect whether
+      * an encoded parametric state is final.
+      *
+      * @note Inspect javadoc of
+      *       [[io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDescription#getDegreeMinusStateLengthAddendums() EncodedParametricDescription#getDegreeMinusStateLengthAddendums()]]
+      *       for details.
+      */
+    def encodeDegreeMinusStateLengthAddendums(parametricDescription: ParametricDescription) = {
       val encodedEMinusStateLength = Array.fill(parametricDescription.parametricStatesCount)(0)
 
       parametricDescription.foreachParametricState { (parametricState, stateId) =>
         val maxPosition = maxBoundaryPosition(parametricState)
-        val eMinusStateLength = maxPosition.e - maxPosition.i
+        val stateLength = maxPosition.i // - parametricState.asNonparametricState.minBoundary (== 0)
+        val degreeMinusStateLength = maxPosition.e - stateLength
 
-        encodedEMinusStateLength(stateId) = eMinusStateLength
+        encodedEMinusStateLength(stateId) = degreeMinusStateLength
       }
       encodedEMinusStateLength
     }

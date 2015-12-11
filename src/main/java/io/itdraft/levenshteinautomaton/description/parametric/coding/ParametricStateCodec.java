@@ -23,7 +23,8 @@ import static io.itdraft.levenshteinautomaton.description.parametric.coding.Char
 /**
  * This util class decodes the encoded Levenshtein-automaton state
  * to get minimal boundary, to detect whether it's a final state, or a
- * failure state.
+ * failure state. Also decodes the next state from the encoded parametric
+ * description.
  */
 public class ParametricStateCodec {
 
@@ -106,9 +107,10 @@ public class ParametricStateCodec {
         int n = config.getDegree();
         int minBoundary = getMinBoundary(encodedState, statesCount);
         int stateId = decodeStateId(encodedState, statesCount);
-        int[] degreeMinusStateLength = parametricDescription.getDegreeMinusStateLength();
+        int[] degreeMinusStateLengthAddendums =
+                parametricDescription.getDegreeMinusStateLengthAddendums();
 
-        return minBoundary >= w - n + degreeMinusStateLength[stateId];
+        return minBoundary >= w - n + degreeMinusStateLengthAddendums[stateId];
     }
 
     /**
