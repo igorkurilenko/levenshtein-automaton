@@ -14,30 +14,28 @@ package io.itdraft.levenshteinautomaton
  * limitations under the License.
  */
 
+import io.itdraft.levenshteinautomaton.description.parametric.ParametricDescriptionNotFoundException
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.Specification
 import org.specs2.specification.Tables
 
-class LazyLevenshteinAutomatonSpec extends Specification with Tables {
+class ParametricLevenshteinAutomatonSpec extends Specification with Tables {
 
   import MisspelledWordsUtil._
 
-  "Lazy Levenshtein automaton" should {
+  "Parametric Levenshtein automaton" should {
     "accept acceptable misspelled words" in {
       val rows = generateRowsForAcceptableMisspelledWords
 
       Table4("correct" :: "misspelled" :: "degree" :: "inclTranspositions" :: Nil, rows) |> {
         (correct, misspelled, degree, inclTransp) =>
-            LazyLevenshteinAutomaton(correct, degree, inclTransp) must accept(misspelled)
+            val config = createLevenshteinAutomatonConfig(correct, degree, inclTransp)
+            ParametricLevenshteinAutomaton.create(config) must accept(misspelled)
       }
     }
 
     "reject not acceptable misspelled words" in {
       "correct" | "misspelled" | "degree" | "inclTranspositions" |>
-        "abcdefg" ! "abcdefgx" ! 0 ! true |
-        "abcdefg" ! "abcdefgx" ! 0 ! false |
-        "abcdefg" ! "abcdef" ! 0 ! true |
-        "abcdefg" ! "abcdef" ! 0 ! false |
         "abcdefg" ! "abcdefgxx" ! 1 ! true |
         "abcdefg" ! "abcdefgxx" ! 1 ! false |
         "abcdefg" ! "abcde" ! 1 ! true |
@@ -45,49 +43,43 @@ class LazyLevenshteinAutomatonSpec extends Specification with Tables {
         "abcdefg" ! "abcdefgxxx" ! 2 ! true |
         "abcdefg" ! "abcdefgxxx" ! 2 ! false |
         "abcdefg" ! "abcd" ! 2 ! true |
-        "abcdefg" ! "abcd" ! 2 ! false |
-        "ab" * 15 ! ("ab" * 15).takeRight(14) ! 15 ! true |
-        "ab" * 15 ! ("ab" * 15) + ("d" * 16) ! 15 ! true |
-        "ab" * 15 ! ("ac" * 14) + "cc" ! 15 ! true |
-        "ab" * 15 ! ("ab" * 15).takeRight(14) ! 15 ! false |
-        "ab" * 15 ! ("ab" * 15) + ("d" * 16) ! 15 ! false |
-        "ab" * 15 ! ("ac" * 14) + "cc" ! 15 ! false | {
+        "abcdefg" ! "abcd" ! 2 ! false |  {
         (correct, misspelled, degree, inclTransp) =>
-            LazyLevenshteinAutomaton(correct, degree, inclTransp) must notAccept(misspelled)
+          val config = createLevenshteinAutomatonConfig(correct, degree, inclTransp)
+          ParametricLevenshteinAutomaton.create(config) must notAccept(misspelled)
       }
+    }
+
+    "throw ParametricDescriptionNotFoundException when " +
+      "it's being created and parametric description is not found" in {
+      val config = createLevenshteinAutomatonConfig("any", 3, true)
+      ParametricLevenshteinAutomaton.create(config) must throwA[ParametricDescriptionNotFoundException]
     }
   }
 
-  def accept(misspelled: String): Matcher[LazyLevenshteinAutomaton] = {
-    automaton: LazyLevenshteinAutomaton =>
-      val state = process(automaton, misspelled)
-      (state.isFinal, s"Levenshtein automaton must accept a misspelled word")
+  def process(automaton: ParametricLevenshteinAutomaton, misspelled: String) = {
+    var stateId = automaton.getInitialStateId()
+    for (x <- misspelled) stateId = automaton.getNextStateId(stateId, x)
+    stateId
   }
 
-  def notAccept(misspelled: String): Matcher[LazyLevenshteinAutomaton] = {
-    automaton: LazyLevenshteinAutomaton =>
-      val state = process(automaton, misspelled)
-      (!state.isFinal, s"Levenshtein automaton must not accept a misspelled word")
+  def notAccept(misspelled: String): Matcher[ParametricLevenshteinAutomaton] = {
+    automaton: ParametricLevenshteinAutomaton =>
+      val stateId = process(automaton, misspelled)
+      (!automaton.isStateFinal(stateId),
+        s"Parametric Levenshtein automaton must not accept a misspelled word")
   }
 
-  def process(automaton: LazyLevenshteinAutomaton, misspelled: String) = {
-    var state = automaton.initialState
-    for (x <- misspelled) state = automaton.getNextState(state, x)
-    state
+  def accept(misspelled: String): Matcher[ParametricLevenshteinAutomaton] = {
+    automaton: ParametricLevenshteinAutomaton =>
+      val stateId = process(automaton, misspelled)
+      (automaton.isStateFinal(stateId),
+        s"Parametric Levenshtein automaton must accept a misspelled word")
   }
 
   def generateRowsForAcceptableMisspelledWords = {
     var rows: List[DataRow4[String, String, Int, Boolean]] = Nil
 
-    // if degree is 0
-    for (inclTranspositions <- List(false, true)) {
-      val degree = 0
-      val correct = "abcdefg"
-      val misspelled = correct + ("x" * degree)
-      rows = DataRow4(correct, misspelled, degree, inclTranspositions) :: rows
-    }
-
-    // if degree is 1 or 2
     for (degree <- 1 to 2) {
       val correct = "abcdefg"
       var misspelledWords =
@@ -126,22 +118,6 @@ class LazyLevenshteinAutomatonSpec extends Specification with Tables {
       }
     }
 
-    // if degree is 15
-    for (inclTranspositions <- List(false, true)) {
-      val degree = 15
-      val correct = "ab" * degree
-      var misspelledWords =
-        correct.takeRight(degree) :: // for insertion edit op
-          correct + ("d" * degree) :: // for deletion edit op
-          "ac" * degree :: // for substitution edit op
-          Nil
-      // for transposition edit op
-      if (inclTranspositions) misspelledWords = "ba" * degree :: misspelledWords
-
-      misspelledWords.foreach { misspelled =>
-        rows = DataRow4(correct, misspelled, degree, inclTranspositions) :: rows
-      }
-    }
     rows
   }
 }

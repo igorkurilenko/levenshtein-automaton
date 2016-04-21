@@ -17,7 +17,7 @@ package io.itdraft.levenshteinautomaton.description.parametric.coding
 import io.itdraft.levenshteinautomaton._
 import io.itdraft.levenshteinautomaton.description.State
 import io.itdraft.levenshteinautomaton.description.nonparametric._
-import io.itdraft.levenshteinautomaton.description.parametric.coding.util.UIntPackedArray
+import io.itdraft.levenshteinautomaton.util.UIntPackedArray
 
 import scala.collection.immutable.HashSet
 import scala.collection.mutable
@@ -248,7 +248,7 @@ object ParametricDescriptionEncoder {
                               (implicit c: LevenshteinAutomatonConfig): NonparametricState = {
     val automaton = LazyLevenshteinAutomaton(c)
 
-    automaton.nextState(adjustConfig(state), '1').asInstanceOf[NonparametricState]
+    automaton.getNextState(adjustConfig(state), '1').asInstanceOf[NonparametricState]
   }
 
   /**

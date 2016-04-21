@@ -107,7 +107,7 @@ class DefaultStateSpec extends Specification with Tables {
         (from, to, word, symbol, degree, inclTranspositions) =>
           implicit val config = createLevenshteinAutomatonConfig(word, degree, inclTranspositions)
 
-          LazyLevenshteinAutomaton(config).nextState(from, symbol) must be equalTo to
+          LazyLevenshteinAutomaton(config).getNextState(from, symbol) must be equalTo to
       }
     }
   }

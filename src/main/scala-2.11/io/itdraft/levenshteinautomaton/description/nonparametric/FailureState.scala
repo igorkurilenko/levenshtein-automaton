@@ -45,15 +45,6 @@ protected[levenshteinautomaton] object FailureState extends NonparametricState {
   def reducedUnion(other: NonparametricState): NonparametricState = other
 
   /**
-    * @inheritdoc
-    *
-    * @param symbolCodePoint the symbol's from the alphabet code point.
-    *
-    * @return an instance of `FailureState`.
-    */
-  def transit(symbolCodePoint: Int) = this
-
-  /**
     * The equality method for `FailureState`.
     *
     * @param that the other object to compare with.

@@ -14,33 +14,39 @@ package io.itdraft.levenshteinautomaton;
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.description.parametric.coding.DefaultEncodedParametricDescriptionFactory;
-import io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDescription;
-import io.itdraft.levenshteinautomaton.description.parametric.coding.EncodedParametricDescriptionFactory;
+import static io.itdraft.levenshteinautomaton.util.StringUtil.toCodePoints;
 
 /**
  * Represents a configuration to build the Levenshtein-automaton.
  */
 public class LevenshteinAutomatonConfig {
-    private String word;
-    private int wordCodePointCount;
+    private int[] wordCodePoints;
     private int degree;
     private boolean inclTransposition;
-    private EncodedParametricDescriptionFactory parametricDescriptionFactory;
 
     /**
      * Constructor. Transposition support is excluded.
      *
-     * @param word                         an input word the Levenshtein-automaton is for.
-     * @param degree                       automaton recognizes the set of all words
-     *                                     where the Levenshtein-distance between a word from
-     *                                     the set and {@code word} does not exceed {@code degree}.
-     * @param parametricDescriptionFactory a factory to discover the encoded parametric description
-     *                                     of the Levenshtein-automaton.
+     * @param word   an input word the Levenshtein-automaton is for.
+     * @param degree automaton recognizes the set of all words
+     *               where the Levenshtein-distance between a word from
+     *               the set and {@code word} does not exceed {@code degree}.
      */
-    public LevenshteinAutomatonConfig(String word, int degree,
-                                      EncodedParametricDescriptionFactory parametricDescriptionFactory) {
-        this(word, degree, false, parametricDescriptionFactory);
+    public LevenshteinAutomatonConfig(String word, int degree) {
+        this(word, degree, false);
+    }
+
+    /**
+     * Constructor. Transposition support is excluded.
+     *
+     * @param wordCodePoints code points of an input word the Levenshtein-automaton
+     *                       is being built for.
+     * @param degree         automaton recognizes the set of all words
+     *                       where the Levenshtein-distance between a word from
+     *                       the set and {@code word} does not exceed {@code degree}.
+     */
+    public LevenshteinAutomatonConfig(int[] wordCodePoints, int degree) {
+        this(wordCodePoints, degree, false);
     }
 
     /**
@@ -54,35 +60,31 @@ public class LevenshteinAutomatonConfig {
      *                          operation.
      */
     public LevenshteinAutomatonConfig(String word, int degree, boolean inclTransposition) {
-        this(word, degree, inclTransposition, new DefaultEncodedParametricDescriptionFactory());
+        this(toCodePoints(word), degree, inclTransposition);
     }
 
     /**
      * Constructor.
      *
-     * @param word                         an input word the Levenshtein-automaton is for.
-     * @param degree                       automaton recognizes the set of all words
-     *                                     where the Levenshtein-distance between a word from
-     *                                     the set and {@code word} does not exceed {@code degree}.
-     * @param inclTransposition            whether include transposition as a primitive edit
-     *                                     operation.
-     * @param parametricDescriptionFactory a factory to discover the encoded parametric description
-     *                                     of the Levenshtein-automaton.
+     * @param wordCodePoints    code points of an input word the Levenshtein-automaton
+     *                          is being built for.
+     * @param degree            automaton recognizes the set of all words
+     *                          where the Levenshtein-distance between a word from
+     *                          the set and {@code word} does not exceed {@code degree}.
+     * @param inclTransposition whether include transposition as a primitive edit
+     *                          operation.
      */
-    public LevenshteinAutomatonConfig(String word, int degree, boolean inclTransposition,
-                                      EncodedParametricDescriptionFactory parametricDescriptionFactory) {
-        this.word = word;
-        this.wordCodePointCount = word.codePointCount(0, word.length());
+    public LevenshteinAutomatonConfig(int[] wordCodePoints, int degree, boolean inclTransposition) {
+        this.wordCodePoints = wordCodePoints;
         this.degree = degree;
         this.inclTransposition = inclTransposition;
-        this.parametricDescriptionFactory = parametricDescriptionFactory;
     }
 
     /**
      * The input word the Levenshtein-automaton is for.
      */
-    public String getWord() {
-        return word;
+    public int[] getWordCodePoints() {
+        return wordCodePoints;
     }
 
     /**
@@ -101,24 +103,15 @@ public class LevenshteinAutomatonConfig {
         return inclTransposition;
     }
 
-    /**
-     * A factory to discover the parametric description of the Levenshtein-automaton.
-     */
-    public EncodedParametricDescriptionFactory getParametricDescriptionFactory() {
-        return parametricDescriptionFactory;
+    public void setWord(int[] wordCodePoints) {
+        this.wordCodePoints = wordCodePoints;
     }
 
-    /**
-     * Returns the number of Unicode code points of a word
-     * the Levenshtein-automaton is for.
-     */
-    public int getWordCodePointCount() {
-        return wordCodePointCount;
+    public void setDegree(int degree) {
+        this.degree = degree;
     }
 
-    public EncodedParametricDescription getEncodedParametricDescription() {
-        return parametricDescriptionFactory == null ? null :
-                parametricDescriptionFactory.getEncodedParametricDescription(
-                        degree, inclTransposition);
+    public void setInclTransposition(boolean inclTransposition) {
+        this.inclTransposition = inclTransposition;
     }
 }

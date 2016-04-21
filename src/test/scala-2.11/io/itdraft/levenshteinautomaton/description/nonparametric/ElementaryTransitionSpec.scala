@@ -22,6 +22,7 @@ class ElementaryTransitionSpec extends Specification with Tables {
 
   import io.itdraft.levenshteinautomaton._
   import io.itdraft.levenshteinautomaton.description.nonparametric._
+  import io.itdraft.levenshteinautomaton.util.StringUtil._
 
   "Elementary transition for various positions" should {
     "perform transition according to the algorithm's publication" in {
@@ -45,7 +46,7 @@ class ElementaryTransitionSpec extends Specification with Tables {
           implicit val automatonConfig = createLevenshteinAutomatonConfig(word, degree, inclTranspositions)
           val transition = ElementaryTransition()
           val (i, e) = position
-          val v = DefaultCharacteristicVector(symbol, word, i)
+          val v = DefaultCharacteristicVector(symbol, toCodePoints(word), i)
 
           transition(i ^# e, v) must be equalTo state
       }

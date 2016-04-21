@@ -14,6 +14,7 @@ package io.itdraft.levenshteinautomaton.description.parametric.coding.util;
  * limitations under the License.
  */
 
+import io.itdraft.levenshteinautomaton.util.UIntPackedArray;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

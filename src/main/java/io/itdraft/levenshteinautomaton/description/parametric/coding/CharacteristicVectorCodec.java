@@ -57,24 +57,19 @@ public final class CharacteristicVectorCodec {
      * range from {@code from} up to (but not including) {@code until}.
      */
     public static int createEncodedCharacteristicVector(final int symbolCodePoint,
-                                                        final String word,
+                                                        final int[] wordCodePoints,
                                                         final int from, final int until) {
-        assert until - from <= MAX_ALLOWED_VECTOR_SIZE:
+        assert until - from <= MAX_ALLOWED_VECTOR_SIZE :
                 "Specified range for characteristic vector creation exceeds maximal allowed value.";
 
-        int r = 0, i = 0, curCodePoint = 0;
         int vector = EMPTY;
+        int start = Math.max(from, 0);
+        int end = Math.min(until, wordCodePoints.length);
 
-        while (r < until && i < word.length()) {
-            curCodePoint = word.codePointAt(i);
+        for (int i = start; i < end; i++) {
+            vector <<= 1;
 
-            if (from <= r && r < until) {
-                vector <<= 1;
-                if (curCodePoint == symbolCodePoint) vector |= 1;
-            }
-
-            i += Character.charCount(curCodePoint);
-            r += 1;
+            if (wordCodePoints[i] == symbolCodePoint) vector |= 1;
         }
 
         return vector;

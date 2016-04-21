@@ -69,15 +69,15 @@ protected[levenshteinautomaton] object DefaultCharacteristicVector {
     *
     * @param symbolCodePoint a symbol's code point the characteristic vector
     *                        is being built for.
-    * @param word a word the characteristic vector is being built for.
+    * @param wordCodePoints code points of a word the characteristic vector is being built for.
     * @param from the minimal boundary of `word` to start building the characteristic vector.
     *
     * @return an instance of `DefaultCharacteristicVector` for the `word`'s range from `from`
     *         up to the end of `word`.
     */
-  def apply(symbolCodePoint: Int, word: String,
+  def apply(symbolCodePoint: Int, wordCodePoints: Array[Int],
             from: Int): DefaultCharacteristicVector =
-    apply(symbolCodePoint, word, from, codePointCount(word))
+    apply(symbolCodePoint, wordCodePoints, from, wordCodePoints.length)
 
   /**
     * Creates the characteristic vector `&lt;b<sub>i</sub>, ..., b<sub>k</sub>&gt;`
@@ -87,7 +87,7 @@ protected[levenshteinautomaton] object DefaultCharacteristicVector {
     *
     * @param symbolCodePoint a symbol's code point the characteristic
     *                        vector is being built for.
-    * @param word a word the characteristic vector is being built for.
+    * @param wordCodePoints code points of a word the characteristic vector is being built for.
     * @param from minimal boundary of `word` to start building the
     *             characteristic vector.
     * @param until maximal boundary until which the characteristic
@@ -96,16 +96,12 @@ protected[levenshteinautomaton] object DefaultCharacteristicVector {
     * @return an instance of `DefaultCharacteristicVector` for the `word`'s range from `from`
     *         up to (but not including) `until`.
     */
-  def apply(symbolCodePoint: Int, word: String,
+  def apply(symbolCodePoint: Int, wordCodePoints: Array[Int],
             from: Int, until: Int): DefaultCharacteristicVector = {
     val v = ListBuffer.empty[Boolean]
-    var r, i, curCodePoint = 0
 
-    while (r < until && i < word.length) {
-      curCodePoint = word.codePointAt(i)
-      if (r >= from && r < until) v.append(curCodePoint == symbolCodePoint)
-      i += Character.charCount(curCodePoint)
-      r += 1
+    for(i <- from.max(0) until until.min(wordCodePoints.length)) {
+      v.append(symbolCodePoint == wordCodePoints(i))
     }
 
     DefaultCharacteristicVector(v)

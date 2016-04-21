@@ -69,10 +69,8 @@ protected[levenshteinautomaton] object NonparametricState {
     * Returns the initial state for the nonparametrically
     * described Levenshtein-automaton.
     */
-  def initial(ch: LevenshteinAutomatonConfig): NonparametricState = {
-    implicit val _ = ch
-    State(0 ^# 0)
-  }
+  def initial(implicit ch: LevenshteinAutomatonConfig): NonparametricState = State(0 ^# 0)
+
 
   def apply(positions: Position*)(implicit c: LevenshteinAutomatonConfig): NonparametricState =
     NonparametricState(ImageSet(positions: _*))
