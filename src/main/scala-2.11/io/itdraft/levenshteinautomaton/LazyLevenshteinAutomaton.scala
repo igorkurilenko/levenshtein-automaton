@@ -16,14 +16,11 @@ package io.itdraft.levenshteinautomaton
 
 import io.itdraft.levenshteinautomaton.description._
 import io.itdraft.levenshteinautomaton.description.nonparametric.{ElementaryTransition, FailureState, NonparametricState}
-import io.itdraft.levenshteinautomaton.description.parametric.ParametricState
-import io.itdraft.levenshteinautomaton.description.parametric.coding.{DefaultEncodedParametricDescriptionFactory, EncodedParametricDescriptionFactory, ParametricStateCodec}
 
 /**
   * A class to represent the Levenshtein-automaton.
   *
   * @note Lazy because it computes next state on every transition.
-  *
   * @example {{{
   * val dictionaryWord: String = ...
   * val misspelledWord: String = ...
@@ -38,11 +35,11 @@ import io.itdraft.levenshteinautomaton.description.parametric.coding.{DefaultEnc
   * var i, cp = 0
   * while(i < dictionaryWord.length) {
   *   cp = dictionaryWord.codePointAt(i)
-  *   state = automaton.nextState(state, cp)
+  *   state = automaton.getNextStateId(state, cp)
   *   i += Character.charCount(cp)
   * }
   *
-  * if(state.isFinal) println("Misspelled word is accepted.")
+  * if(state.isFinalState) println("Misspelled word is accepted.")
   * else println("Misspelled word is rejected.")
   * }}}
   */
@@ -52,36 +49,24 @@ class LazyLevenshteinAutomaton private(automatonConfig: LevenshteinAutomatonConf
   /**
     * The initial state to start an automaton traverse.
     */
-  lazy val initialState = State.initial
+  lazy val initialState = NonparametricState.initial
 
   private val elementaryTransition = ElementaryTransition()
 
   /**
     * Transits to a next state.
     *
-    * @param stateFrom a state to transit from.
-    * @param symbolCodePoint a code point of a next symbol from a word
+    * @param curState a current state.
+    * @param alphaCodePoint a code point of a next alpha from a word
     *                        is being recognized.
     * @return an instance of a next `State`.
     */
-  def nextState(stateFrom: State, symbolCodePoint: Int) = stateFrom match {
-    case state: NonparametricState => transit(state, symbolCodePoint)
-    case state: ParametricState => transit(state, symbolCodePoint)
-  }
+  def getNextState(curState: NonparametricState, alphaCodePoint: Int) =
+    curState.imageSet.fold(FailureState: NonparametricState) { (state, position) =>
+    val vector = DefaultCharacteristicVector(alphaCodePoint, automatonConfig.getWordCodePoints,
+      position.i, position.i + position.relevantSubwordMaxLength)
 
-  private def transit(state: NonparametricState, symbolCodePoint: Int) =
-    state.imageSet.fold(FailureState: NonparametricState) { (state, position) =>
-      val vector = DefaultCharacteristicVector(symbolCodePoint, automatonConfig.getWord,
-        position.i, position.i + position.relevantSubwordMaxLength)
-
-      state |~ elementaryTransition(position, vector)
-    }
-
-  private def transit(state: ParametricState, symbolCodePoint: Int) = {
-    val nextState = ParametricStateCodec.transit(
-      state.asEncodedInteger, symbolCodePoint, automatonConfig)
-
-    new ParametricState(nextState, automatonConfig)
+    state |~ elementaryTransition(position, vector)
   }
 }
 
@@ -96,16 +81,12 @@ object LazyLevenshteinAutomaton {
     *               and a word automaton is built for does not exceed `degree`.
     * @param inclTransposition whether include transposition as a primitive
     *                          edit operation.
-    *
     * @return an instance of `LevenshteinAutomaton` which uses `EncodedParametricDescription`
     *         if it exists for the specified parameters or
     *         computes next states at run time otherwise.
     */
-  def apply(word: String, degree: Int, inclTransposition: Boolean,
-            parametricDescriptionFactory: EncodedParametricDescriptionFactory =
-            new DefaultEncodedParametricDescriptionFactory()): LazyLevenshteinAutomaton =
-    apply(createLevenshteinAutomatonConfig(word, degree,
-      inclTransposition, parametricDescriptionFactory))
+  def apply(word: String, degree: Int, inclTransposition: Boolean): LazyLevenshteinAutomaton =
+    apply(createLevenshteinAutomatonConfig(word, degree, inclTransposition))
 
   /**
     * Creates an instance of `LevenshteinAutomaton`.

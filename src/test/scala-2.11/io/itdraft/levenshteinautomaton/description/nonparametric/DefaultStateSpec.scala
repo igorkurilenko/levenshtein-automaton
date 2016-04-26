@@ -98,16 +98,16 @@ class DefaultStateSpec extends Specification with Tables {
   "Transition of various states and characteristic vectors" should {
     "generate new states according to definitions in the algorithm's publication" in {
       // todo: tests for states including t-positions
-      "from" | "to" | "word" | "symbol" | "degree" | "inclTranspositions" |>
+      "from" | "to" | "word" | "alpha" | "degree" | "inclTranspositions" |>
         (0, 0) :: Nil ! (0, 1) ::(1, 1) ::(3, 2) :: Nil ! "0010000000" ! '1' ! 5 ! false |
         (1, 2) ::(2, 2) ::(3, 2) ::(4, 2) :: Nil ! (4, 2) ::(2, 3) ::(1, 3) :: Nil ! "1001000010" ! '1' ! 5 ! false |
         (4, 2) ::(2, 3) ::(1, 3) :: Nil ! (2, 4) ::(1, 4) ::(5, 2) :: Nil ! "0000100000" ! '1' ! 5 ! false |
         (7, 5) ::(9, 4) :: Nil ! (9, 5) ::(10, 5) :: Nil ! "0000000000" ! '1' ! 5 ! false |
         (9, 5) ::(10, 5) :: Nil ! Nil ! "0000000000" ! '1' ! 5 ! false | {
-        (from, to, word, symbol, degree, inclTranspositions) =>
+        (from, to, word, alpha, degree, inclTranspositions) =>
           implicit val config = createLevenshteinAutomatonConfig(word, degree, inclTranspositions)
 
-          LazyLevenshteinAutomaton(config).nextState(from, symbol) must be equalTo to
+          LazyLevenshteinAutomaton(config).getNextState(from, alpha) must be equalTo to
       }
     }
   }

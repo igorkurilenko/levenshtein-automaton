@@ -15,7 +15,6 @@ package io.itdraft.levenshteinautomaton.description
  */
 
 import io.itdraft.levenshteinautomaton.description.nonparametric._
-import io.itdraft.levenshteinautomaton.description.parametric.ParametricState
 
 /**
   * A class to represent a state of the Levenshtein-automaton.
@@ -40,18 +39,6 @@ trait State {
 
 protected[levenshteinautomaton] object State {
   import io.itdraft.levenshteinautomaton._
-
-  /**
-    * Factory method to create an initial state.
-    *
-    * @return the initial state as instance of `NonparametricState` or `ParametricState`.
-    *         It depends on whether parametric description exists.
-    */
-  def initial()(implicit ch: LevenshteinAutomatonConfig): State =
-    Option(ch.getParametricDescriptionFactory.getEncodedParametricDescription(ch.n, ch.inclTransposition)) match {
-      case Some(_) => ParametricState.initial(ch)
-      case None => NonparametricState.initial(ch)
-    }
 
   def apply(positions: Position*)(implicit c: LevenshteinAutomatonConfig): NonparametricState =
     NonparametricState(positions: _*)

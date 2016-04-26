@@ -17,7 +17,7 @@ package io.itdraft.levenshteinautomaton.description.parametric.coding
 import io.itdraft.levenshteinautomaton._
 import io.itdraft.levenshteinautomaton.description.State
 import io.itdraft.levenshteinautomaton.description.nonparametric._
-import io.itdraft.levenshteinautomaton.description.parametric.coding.util.UIntPackedArray
+import io.itdraft.levenshteinautomaton.util.UIntPackedArray
 
 import scala.collection.immutable.HashSet
 import scala.collection.mutable
@@ -26,6 +26,15 @@ import scala.collection.mutable.ListBuffer
 
 object ParametricDescriptionEncoder {
 
+  case class UnsupportedDegreeException private(message: String) extends RuntimeException(message)
+
+  object UnsupportedDegreeException {
+    def apply(maxDegree: Int): UnsupportedDegreeException =
+      UnsupportedDegreeException(s"Current implementation of the parametric " +
+        s"description encoding doesn't support the degree of the " +
+        s"Levenshtein-automaton greater than $maxDegree")
+  }
+
   val MAX_DEGREE = (CharacteristicVectorCodec.MAX_ALLOWED_VECTOR_SIZE - 1) / 2
   val DEFAULT_DEGREE = 1
   val DEFAULT_INCL_TRANSPOSITION = false
@@ -33,9 +42,12 @@ object ParametricDescriptionEncoder {
   def main(args: Array[String]) {
     val (degree, inclTransposition) = parseArgs(args)
 
-    validateDegree(degree)
+    try {
+      println(createEncodedParametricDescription(degree, inclTransposition).toString)
 
-    println(createEncodedParametricDescription(degree, inclTransposition).toString)
+    } catch {
+      case e: UnsupportedDegreeException => println(e.getMessage); System.exit(1)
+    }
   }
 
   def parseArgs(args: Array[String]): (Int, Boolean) = {
@@ -57,16 +69,6 @@ object ParametricDescriptionEncoder {
         System.exit(1)
         acc
       case _ => acc
-    }
-  }
-
-  def validateDegree(degree: Int): Unit = {
-    if (degree > MAX_DEGREE) {
-      println(s"Current implementation of the parametric " +
-        s"description encoding doesn't support the degree of the " +
-        s"Levenshtein-automaton greater than $MAX_DEGREE")
-
-      System.exit(1)
     }
   }
 
@@ -98,11 +100,17 @@ object ParametricDescriptionEncoder {
   /**
     * Computes the parametric description for specified parameters and encodes it.
     *
-    * @param degree the degree of the Levenshtein-automaton.
-    * @param inclTransposition whether include transposition as a primitive edit operation.
+    * @param degree                      the degree of the Levenshtein-automaton.
+    * @param inclTransposition           whether include transposition as a primitive
+    *                                    edit operation.
+    * @throws UnsupportedDegreeException if the specified degree is greater
+    *                                    than the library supports.
     * @return an instance of `EncodedParametricDescription`.
     */
+  @throws(classOf[UnsupportedDegreeException])
   def createEncodedParametricDescription(degree: Int, inclTransposition: Boolean) = {
+    if (degree > MAX_DEGREE) throw UnsupportedDegreeException(MAX_DEGREE)
+
     val maxVectorAsInt = {
       val relevantSubwordMaxLength = 2 * degree + 1
       var result = CharacteristicVectorCodec.EMPTY
@@ -195,7 +203,7 @@ object ParametricDescriptionEncoder {
       parametricDescription.foreachParametricState { (parametricState, stateId) =>
         val maxPosition = maxBoundaryPosition(parametricState)
         val stateLength = maxPosition.i // - parametricState.asNonparametricState.minBoundary (== 0)
-        val degreeMinusStateLength = maxPosition.e - stateLength
+      val degreeMinusStateLength = maxPosition.e - stateLength
 
         encodedEMinusStateLength(stateId) = degreeMinusStateLength
       }
@@ -240,7 +248,7 @@ object ParametricDescriptionEncoder {
                               (implicit c: LevenshteinAutomatonConfig): NonparametricState = {
     val automaton = LazyLevenshteinAutomaton(c)
 
-    automaton.nextState(adjustConfig(state), '1').asInstanceOf[NonparametricState]
+    automaton.getNextState(adjustConfig(state), '1').asInstanceOf[NonparametricState]
   }
 
   /**

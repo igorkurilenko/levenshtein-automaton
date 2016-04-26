@@ -1,4 +1,4 @@
-package io.itdraft.levenshteinautomaton.description.parametric.coding.util;
+package io.itdraft.levenshteinautomaton.util;
 
 import java.util.LinkedList;
 import java.util.List;

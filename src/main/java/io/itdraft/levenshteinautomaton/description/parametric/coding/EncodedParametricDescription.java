@@ -14,13 +14,19 @@ package io.itdraft.levenshteinautomaton.description.parametric.coding;
  * limitations under the License.
  */
 
-import io.itdraft.levenshteinautomaton.description.parametric.coding.util.UIntPackedArray;
+import io.itdraft.levenshteinautomaton.description.parametric.ParametricDescription;
+import io.itdraft.levenshteinautomaton.util.UIntPackedArray;
+
+import java.util.NoSuchElementException;
 
 /**
  * Represents the encoded parametric description of the Levenshtein-automaton.
  */
-public class EncodedParametricDescription {
-    private final int automatonDegree;
+public class EncodedParametricDescription implements ParametricDescription {
+
+    public static final int INITIAL_STATE_ID = 0;
+
+    private final int degree;
     private final boolean inclTransposition;
     private final int parametricStatesCount;
     private final UIntPackedArray encodedTransitionsTable;
@@ -31,7 +37,7 @@ public class EncodedParametricDescription {
      * Constructor. Use the {@code ParametricDescriptionEncoder} app to create
      * constructor's parameters values.
      *
-     * @param automatonDegree                 the degree of the Levenshtein-automaton this
+     * @param degree                          the degree of the Levenshtein-automaton this
      *                                        {@code EncodedParametricDescription} is created for.
      * @param inclTransposition               whether {@code EncodedParametricDescription} is
      *                                        created for the Levenshtein-automaton which supports
@@ -39,18 +45,32 @@ public class EncodedParametricDescription {
      * @param encodedTransitionsTable         the encoded parametric states transitions table.
      * @param encodedBoundaryOffsets          the encoded parametric states minimal boundary offsets
      *                                        (a complement to the transitions table).
-     * @param degreeMinusStateLengthAddendums This addendums are required for
-     *                                        {@link ParametricStateCodec} to detect whether an
-     *                                        encoded parametric state is final. Inspect javadoc of
-     *                                        {@link EncodedParametricDescription#getDegreeMinusStateLengthAddendums()}
-     *                                        for details.
+     * @param degreeMinusStateLengthAddendums addendums required to detect whether an encoded
+     *                                        parametric state is final. <p>Position {@code i^#e} is
+     *                                        accepting if <p>{@code w - i <= n - e}.</p>
+     *                                        By definition a state is final if it contains an accepting position.
+     *                                        Let {@code j^#f} be the max boundary position of the state.
+     *                                        Let {@code i^#j} be the min boundary position of the state.
+     *                                        The state becomes final as soon as max boundary position becomes
+     *                                        an accepting position: <p>{@code w - j <= n - f}.</p>
+     *                                        Let assume that {@code stateLength = j - i}. Then
+     *                                        <p>{@code j = i + stateLength}</p>
+     *                                        <p>{@code w - (i + stateLength) <= n - f}</p>
+     *                                        then the condition for state to become final turns into the following form
+     *                                        <p>{@code i >= w - n + f - stateLength}</p>
+     *                                        This formula is applied in {@code ParametricStateCodec}.
+     *                                        {@code w, n} and {@code i} are dependent of context,
+     *                                        but the {@code f - stateLength} addendum (where {@code f}
+     *                                        is the degree of the max boundary position fo the state) is static for
+     *                                        each state.
+     *                                        </p>
      */
-    public EncodedParametricDescription(int automatonDegree,
+    public EncodedParametricDescription(int degree,
                                         boolean inclTransposition,
                                         UIntPackedArray encodedTransitionsTable,
                                         UIntPackedArray encodedBoundaryOffsets,
                                         int[] degreeMinusStateLengthAddendums) {
-        this.automatonDegree = automatonDegree;
+        this.degree = degree;
         this.inclTransposition = inclTransposition;
         this.encodedTransitionsTable = encodedTransitionsTable;
         this.encodedBoundaryOffsets = encodedBoundaryOffsets;
@@ -68,8 +88,8 @@ public class EncodedParametricDescription {
      * and a word the automaton is built for does not exceed the degree.
      * </p>
      */
-    public int getAutomatonDegree() {
-        return automatonDegree;
+    public int getDegree() {
+        return degree;
     }
 
     /**
@@ -81,49 +101,63 @@ public class EncodedParametricDescription {
     }
 
     /**
-     * Returns the number of parametric states this {@code EncodedParametricDescription} contains.
+     * Decodes the next stateId from the encoded parametric
+     * description and returns it encoded as an integer value.
+     *
+     * @param curStateId           current Levenshtein-automaton parametric state
+     *                             encoded as an integer.
+     * @param characteristicVector a characteristic vector of a relevant subword.
+     * @return a next state id of the Levenshtein-automaton encoded as an integer value.
      */
-    public int getParametricStatesCount() {
-        return parametricStatesCount;
+    public int getNextStateId(int characteristicVector, int curStateId) {
+        if (isFailureState(curStateId)) return curStateId;
+
+        int stateRealId = decodeStateRealId(curStateId);
+        int minBoundary = decodeMinBoundary(curStateId);
+        int index = (characteristicVector - 1) * parametricStatesCount + stateRealId;
+        int nextStateRealId = encodedTransitionsTable.get(index);
+        int boundaryOffset = encodedBoundaryOffsets.get(index);
+
+        return encodedStateId(nextStateRealId, minBoundary + boundaryOffset, parametricStatesCount);
     }
 
-    /**
-     * Returns the encoded parametric states transitions table.
-     */
-    public UIntPackedArray getEncodedTransitionsTable() {
-        return encodedTransitionsTable;
+    public int getInitialStateId() {
+        return INITIAL_STATE_ID;
     }
 
-    /**
-     * The encoded parametric states minimal boundary offsets
-     * (a complement to the transitions table).
-     */
-    public UIntPackedArray getEncodedBoundaryOffsets() {
-        return encodedBoundaryOffsets;
+    public boolean isFinalState(int stateId, int w) {
+        if (isFailureState(stateId)) return false;
+
+        int n = degree;
+        int minBoundary = getStateMinBoundary(stateId);
+        int stateRealId = decodeStateRealId(stateId);
+
+        return minBoundary >= w - n + degreeMinusStateLengthAddendums[stateRealId];
     }
 
-    /**
-     * This addendums are required for {@link ParametricStateCodec}
-     * to detect whether an encoded parametric state is final.
-     * <p>Position {@code i^#e} is accepting if <p>{@code w - i <= n - e}.</p>
-     * By definition a state is final if it contains an accepting position.
-     * Let {@code j^#f} be the max boundary position of the state.
-     * Let {@code i^#j} be the min boundary position of the state.
-     * The state becomes final as soon as max boundary position becomes
-     * an accepting position: <p>{@code w - j <= n - f}.</p>
-     * Let assume that {@code stateLength = j - i}. Then
-     * <p>{@code j = i + stateLength}</p>
-     * <p>{@code w - (i + stateLength) <= n - f}</p>
-     * then the condition for state to become final turns into the following form
-     * <p>{@code i >= w - n + f - stateLength}</p>
-     * This formula is applied in {@code ParametricStateCodec}.
-     * {@code w, n} and {@code i} are dependent of context,
-     * but the {@code f - stateLength} addendum (where {@code f}
-     * is the degree of the max boundary position fo the state) is static for
-     * each state.</p>
-     */
-    public int[] getDegreeMinusStateLengthAddendums() {
-        return degreeMinusStateLengthAddendums;
+    public boolean isFailureState(int stateId) {
+        return decodeStateRealId(stateId) == parametricStatesCount;
+    }
+
+    public int getStateMinBoundary(int stateId) {
+        if (isFailureState(stateId)) {
+            throw new NoSuchElementException(
+                    "Failure encodedState doesn't have the minimal boundary");
+        }
+
+        return decodeMinBoundary(stateId);
+    }
+
+    private int decodeMinBoundary(int stateId) {
+        return stateId / (parametricStatesCount + 1);
+    }
+
+    private int decodeStateRealId(int stateId) {
+        return stateId % (parametricStatesCount + 1);
+    }
+
+    private int encodedStateId(int stateRealId, int minBoundary, int statesCount) {
+        return minBoundary * (statesCount + 1) + stateRealId;
     }
 
     @Override
@@ -134,16 +168,16 @@ public class EncodedParametricDescription {
     public String toJavaString() {
         StringBuilder sb = new StringBuilder();
         sb.append("new EncodedParametricDescription(")
-                .append(getAutomatonDegree()).append(", ")
+                .append(getDegree()).append(", ")
                 .append(doesInclTransposition()).append(", \n\t");
 
-        appendUIntPackedArray(sb, getEncodedTransitionsTable())
+        appendUIntPackedArray(sb, encodedTransitionsTable)
                 .append(", \n\t");
 
-        appendUIntPackedArray(sb, getEncodedBoundaryOffsets())
+        appendUIntPackedArray(sb, encodedBoundaryOffsets)
                 .append(", \n\t");
 
-        appendIntArray(sb, getDegreeMinusStateLengthAddendums())
+        appendIntArray(sb, degreeMinusStateLengthAddendums)
                 .append(")");
 
         return sb.toString();
