@@ -66,14 +66,14 @@ class ParametricLevenshteinAutomatonSpec extends Specification with Tables {
   def notAccept(misspelled: String): Matcher[ParametricLevenshteinAutomaton] = {
     automaton: ParametricLevenshteinAutomaton =>
       val stateId = process(automaton, misspelled)
-      (!automaton.isStateFinal(stateId),
+      (!automaton.isFinalState(stateId),
         s"Parametric Levenshtein automaton must not accept a misspelled word")
   }
 
   def accept(misspelled: String): Matcher[ParametricLevenshteinAutomaton] = {
     automaton: ParametricLevenshteinAutomaton =>
       val stateId = process(automaton, misspelled)
-      (automaton.isStateFinal(stateId),
+      (automaton.isFinalState(stateId),
         s"Parametric Levenshtein automaton must accept a misspelled word")
   }
 

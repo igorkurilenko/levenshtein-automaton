@@ -16,6 +16,8 @@ package io.itdraft.levenshteinautomaton.description.parametric.coding;
 
 import static io.itdraft.levenshteinautomaton.util.StringUtil.toCodePoints;
 import static org.junit.Assert.assertTrue;
+
+import io.itdraft.levenshteinautomaton.description.parametric.coding.CharacteristicVectorCodec;
 import org.junit.Test;
 
 public class CharacteristicVectorCodecTest {
@@ -23,52 +25,52 @@ public class CharacteristicVectorCodecTest {
     @Test
     public void testCreateEncoded() throws Exception {
         String word = "";
-        int vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', toCodePoints(word), 0, 10);
+        int vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('x', toCodePoints(word), 0, 10);
         assertTrue(vector == CharacteristicVectorCodec.EMPTY);
 
         word = "xoxoxo";
-        vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', toCodePoints(word), 4, 6);
+        vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('x', toCodePoints(word), 4, 6);
         assertTrue(vector == Integer.parseInt("110", 2));
 
         word = "xoxoxo";
-        vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', toCodePoints(word), 100, 1000);
+        vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('x', toCodePoints(word), 100, 1000);
         assertTrue(vector == CharacteristicVectorCodec.EMPTY);
 
         word = "xoxoxo";
-        vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', toCodePoints(word), -1000, -100);
+        vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('x', toCodePoints(word), -1000, -100);
         assertTrue(vector == CharacteristicVectorCodec.EMPTY);
 
         word = "xoxoxo";
-        vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', toCodePoints(word), 0, 0);
+        vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('x', toCodePoints(word), 0, 0);
         assertTrue(vector == CharacteristicVectorCodec.EMPTY);
     }
 
     @Test
     public void testDecodeJ() throws Exception {
         String word = "xoxoxo";
-        int vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('o', toCodePoints(word), 0, word.length());
+        int vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('o', toCodePoints(word), 0, word.length());
         assertTrue(CharacteristicVectorCodec.decodeJ(vector) == 2);
 
-        vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('y', toCodePoints(word), 0, word.length());
+        vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('y', toCodePoints(word), 0, word.length());
         assertTrue(CharacteristicVectorCodec.decodeJ(vector) == -1);
 
         word = "";
-        vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('y', toCodePoints(word), 0, word.length());
+        vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('y', toCodePoints(word), 0, word.length());
         assertTrue(CharacteristicVectorCodec.decodeJ(vector) == -1);
     }
 
     @Test
     public void testSize() throws Exception {
         String word = "";
-        int vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', toCodePoints(word), 0, 10);
+        int vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('x', toCodePoints(word), 0, 10);
         assertTrue(CharacteristicVectorCodec.size(vector) == 0);
 
         word = "xoxoxo";
-        vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', toCodePoints(word), 4, 6);
+        vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('x', toCodePoints(word), 4, 6);
         assertTrue(CharacteristicVectorCodec.size(vector) == 2);
 
         word = "xoxoxo";
-        vector = CharacteristicVectorCodec.createEncodedCharacteristicVector('x', toCodePoints(word), 0, word.length());
+        vector = CharacteristicVectorCodec.computeEncodedCharacteristicVector('x', toCodePoints(word), 0, word.length());
         assertTrue(CharacteristicVectorCodec.size(vector) == word.length());
     }
 }

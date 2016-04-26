@@ -11,7 +11,7 @@ public interface ParametricDescription {
      * @param w       the word length
      * @return whether a state is a final state or not.
      */
-    boolean isStateFinal(int stateId, int w);
+    boolean isFinalState(int stateId, int w);
 
     /**
      * Tests if a state is a failure state.
@@ -19,7 +19,7 @@ public interface ParametricDescription {
      * @param stateId an id of a Levenshtein-automaton parametric state to get minimal boundary for.
      * @return whether a state is a failure state or not.
      */
-    boolean isStateFailure(int stateId);
+    boolean isFailureState(int stateId);
 
     /**
      * Returns the minimal boundary of a state.

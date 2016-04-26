@@ -54,8 +54,6 @@ case class DefaultCharacteristicVector(private val v: Seq[Boolean])
 
 protected[levenshteinautomaton] object DefaultCharacteristicVector {
 
-  import io.itdraft.levenshteinautomaton._
-
   /**
     * Empty characteristic vector.
     */
@@ -63,45 +61,43 @@ protected[levenshteinautomaton] object DefaultCharacteristicVector {
 
   /**
     * Creates the characteristic vector `&lt;b<sub>i</sub>, ..., b<sub>k</sub>&gt;`
-    * of a symbol specified by a code point with respect to `word` where `i = from` and
+    * of an alpha with respect to `word` where `i = from` and
     * `k` is the maximal boundary of `word`. If the specified interval is invalid then
     * an empty vector will be returned (no exceptions are thrown).
     *
-    * @param symbolCodePoint a symbol's code point the characteristic vector
-    *                        is being built for.
+    * @param alphaCodePoint an alpha's code point the characteristic vector
+    *                       is being built for.
     * @param wordCodePoints code points of a word the characteristic vector is being built for.
-    * @param from the minimal boundary of `word` to start building the characteristic vector.
-    *
+    * @param from           the minimal boundary of `word` to start building the characteristic vector.
     * @return an instance of `DefaultCharacteristicVector` for the `word`'s range from `from`
     *         up to the end of `word`.
     */
-  def apply(symbolCodePoint: Int, wordCodePoints: Array[Int],
+  def apply(alphaCodePoint: Int, wordCodePoints: Array[Int],
             from: Int): DefaultCharacteristicVector =
-    apply(symbolCodePoint, wordCodePoints, from, wordCodePoints.length)
+    apply(alphaCodePoint, wordCodePoints, from, wordCodePoints.length)
 
   /**
     * Creates the characteristic vector `&lt;b<sub>i</sub>, ..., b<sub>k</sub>&gt;`
-    * of a symbol specified by a code point with respect to `word` where `i = from` and
+    * of an alpha with respect to `word` where `i = from` and
     * `k = until - 1`. If the specified interval is invalid then an empty vector will be
     * returned (no exceptions are thrown).
     *
-    * @param symbolCodePoint a symbol's code point the characteristic
-    *                        vector is being built for.
+    * @param alphaCodePoint an alpha's code point the characteristic
+    *                       vector is being built for.
     * @param wordCodePoints code points of a word the characteristic vector is being built for.
-    * @param from minimal boundary of `word` to start building the
-    *             characteristic vector.
-    * @param until maximal boundary until which the characteristic
-    *              vector is being built for.
-    *
+    * @param from           minimal boundary of `word` to start building the
+    *                       characteristic vector.
+    * @param until          maximal boundary until which the characteristic
+    *                       vector is being built for.
     * @return an instance of `DefaultCharacteristicVector` for the `word`'s range from `from`
     *         up to (but not including) `until`.
     */
-  def apply(symbolCodePoint: Int, wordCodePoints: Array[Int],
+  def apply(alphaCodePoint: Int, wordCodePoints: Array[Int],
             from: Int, until: Int): DefaultCharacteristicVector = {
     val v = ListBuffer.empty[Boolean]
 
-    for(i <- from.max(0) until until.min(wordCodePoints.length)) {
-      v.append(symbolCodePoint == wordCodePoints(i))
+    for (i <- from.max(0) until until.min(wordCodePoints.length)) {
+      v.append(alphaCodePoint == wordCodePoints(i))
     }
 
     DefaultCharacteristicVector(v)

@@ -27,7 +27,7 @@ class ElementaryTransitionSpec extends Specification with Tables {
   "Elementary transition for various positions" should {
     "perform transition according to the algorithm's publication" in {
       // todo: tests for table including transpositions
-      "position" | "word" | "symbol" | "degree" | "inclTranspositions" | "state" |>
+      "position" | "word" | "alpha" | "degree" | "inclTranspositions" | "state" |>
         (0, 0) ! "" ! 'x' ! 0 ! false ! Nil |
         (0, 0) ! "" ! 'x' ! 0 ! true ! Nil |
         (0, 0) ! "x" ! 'x' ! 0 ! false ! (1, 0) :: Nil |
@@ -42,11 +42,11 @@ class ElementaryTransitionSpec extends Specification with Tables {
         (7, 0) ! "00000000" ! '1' ! 5 ! false ! (7, 1) ::(8, 1) :: Nil |
         (8, 0) ! "00000000" ! '1' ! 5 ! false ! (8, 1) :: Nil |
         (8, 5) ! "00000000" ! '1' ! 5 ! false ! Nil | {
-        (position, word, symbol, degree, inclTranspositions, state: List[(Int, Int)]) =>
+        (position, word, alpha, degree, inclTranspositions, state: List[(Int, Int)]) =>
           implicit val automatonConfig = createLevenshteinAutomatonConfig(word, degree, inclTranspositions)
           val transition = ElementaryTransition()
           val (i, e) = position
-          val v = DefaultCharacteristicVector(symbol, toCodePoints(word), i)
+          val v = DefaultCharacteristicVector(alpha, toCodePoints(word), i)
 
           transition(i ^# e, v) must be equalTo state
       }

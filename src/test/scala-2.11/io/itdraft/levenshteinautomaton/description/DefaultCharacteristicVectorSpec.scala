@@ -49,19 +49,19 @@ class DefaultCharacteristicVectorSpec extends Specification {
   """Minimal index j in the characteristic vector of the "hello"""" should {
     val word = "hello"
 
-    "be equal to 3 for the 'l' symbol" in {
+    "be equal to 3 for the 'l' alpha" in {
       DefaultCharacteristicVector('l', toCodePoints(word), 0, codePointCount(word)).j must be equalTo 3
     }
 
-    "be equal to 1 for the 'h' symbol" in {
+    "be equal to 1 for the 'h' alpha" in {
       DefaultCharacteristicVector('h', toCodePoints(word), 0, codePointCount(word)).j must be equalTo 1
     }
 
-    "be equal to 5 for the 'o' symbol" in {
+    "be equal to 5 for the 'o' alpha" in {
       DefaultCharacteristicVector('o', toCodePoints(word), 0, codePointCount(word)).j must be equalTo 5
     }
 
-    "be equal to -1 for the 'x' symbol" in {
+    "be equal to -1 for the 'x' alpha" in {
       DefaultCharacteristicVector('x', toCodePoints(word), 0, codePointCount(word)).j must be equalTo -1
     }
   }

@@ -100,26 +100,47 @@ public class EncodedParametricDescription implements ParametricDescription {
         return inclTransposition;
     }
 
+    /**
+     * Decodes the next stateId from the encoded parametric
+     * description and returns it encoded as an integer value.
+     *
+     * @param curStateId           current Levenshtein-automaton parametric state
+     *                             encoded as an integer.
+     * @param characteristicVector a characteristic vector of a relevant subword.
+     * @return a next state id of the Levenshtein-automaton encoded as an integer value.
+     */
+    public int getNextStateId(int characteristicVector, int curStateId) {
+        if (isFailureState(curStateId)) return curStateId;
+
+        int stateRealId = decodeStateRealId(curStateId);
+        int minBoundary = decodeMinBoundary(curStateId);
+        int index = (characteristicVector - 1) * parametricStatesCount + stateRealId;
+        int nextStateRealId = encodedTransitionsTable.get(index);
+        int boundaryOffset = encodedBoundaryOffsets.get(index);
+
+        return encodedStateId(nextStateRealId, minBoundary + boundaryOffset, parametricStatesCount);
+    }
+
     public int getInitialStateId() {
         return INITIAL_STATE_ID;
     }
 
-    public boolean isStateFinal(int stateId, int w) {
-        if (isStateFailure(stateId)) return false;
+    public boolean isFinalState(int stateId, int w) {
+        if (isFailureState(stateId)) return false;
 
         int n = degree;
         int minBoundary = getStateMinBoundary(stateId);
-        int stateLabel = decodeStateLabel(stateId);
+        int stateRealId = decodeStateRealId(stateId);
 
-        return minBoundary >= w - n + degreeMinusStateLengthAddendums[stateLabel];
+        return minBoundary >= w - n + degreeMinusStateLengthAddendums[stateRealId];
     }
 
-    public boolean isStateFailure(int stateId) {
-        return decodeStateLabel(stateId) == parametricStatesCount;
+    public boolean isFailureState(int stateId) {
+        return decodeStateRealId(stateId) == parametricStatesCount;
     }
 
     public int getStateMinBoundary(int stateId) {
-        if (isStateFailure(stateId)) {
+        if (isFailureState(stateId)) {
             throw new NoSuchElementException(
                     "Failure encodedState doesn't have the minimal boundary");
         }
@@ -127,37 +148,16 @@ public class EncodedParametricDescription implements ParametricDescription {
         return decodeMinBoundary(stateId);
     }
 
-    private int decodeMinBoundary(int encodedState) {
-        return encodedState / (parametricStatesCount + 1);
+    private int decodeMinBoundary(int stateId) {
+        return stateId / (parametricStatesCount + 1);
     }
 
-    private int decodeStateLabel(int encodedState) {
-        return encodedState % (parametricStatesCount + 1);
+    private int decodeStateRealId(int stateId) {
+        return stateId % (parametricStatesCount + 1);
     }
 
-    private int encodeState(int stateId, int minBoundary, int statesCount) {
-        return minBoundary * (statesCount + 1) + stateId;
-    }
-
-    /**
-     * Decodes the next state from the encoded parametric
-     * description and returns it encoded as an integer value.
-     *
-     * @param state                a Levenshtein-automaton parametric state
-     *                             encoded as an integer value to getNextStateId from.
-     * @param characteristicVector a symbol characteristic vector of a relevant subword.
-     * @return a next state of the Levenshtein-automaton encoded as an integer value.
-     */
-    public int getNextStateId(int characteristicVector, int state) {
-        if (isStateFailure(state)) return state;
-
-        int stateId = decodeStateLabel(state);
-        int minBoundary = decodeMinBoundary(state);
-        int index = (characteristicVector - 1) * parametricStatesCount + stateId;
-        int nextStateId = encodedTransitionsTable.get(index);
-        int boundaryOffset = encodedBoundaryOffsets.get(index);
-
-        return encodeState(nextStateId, minBoundary + boundaryOffset, parametricStatesCount);
+    private int encodedStateId(int stateRealId, int minBoundary, int statesCount) {
+        return minBoundary * (statesCount + 1) + stateRealId;
     }
 
     @Override

@@ -39,7 +39,7 @@ import io.itdraft.levenshteinautomaton.description.nonparametric.{ElementaryTran
   *   i += Character.charCount(cp)
   * }
   *
-  * if(state.isStateFinal) println("Misspelled word is accepted.")
+  * if(state.isFinalState) println("Misspelled word is accepted.")
   * else println("Misspelled word is rejected.")
   * }}}
   */
@@ -57,13 +57,13 @@ class LazyLevenshteinAutomaton private(automatonConfig: LevenshteinAutomatonConf
     * Transits to a next state.
     *
     * @param curState a current state.
-    * @param symbolCodePoint a code point of a next symbol from a word
+    * @param alphaCodePoint a code point of a next alpha from a word
     *                        is being recognized.
     * @return an instance of a next `State`.
     */
-  def getNextState(curState: NonparametricState, symbolCodePoint: Int) =
+  def getNextState(curState: NonparametricState, alphaCodePoint: Int) =
     curState.imageSet.fold(FailureState: NonparametricState) { (state, position) =>
-    val vector = DefaultCharacteristicVector(symbolCodePoint, automatonConfig.getWordCodePoints,
+    val vector = DefaultCharacteristicVector(alphaCodePoint, automatonConfig.getWordCodePoints,
       position.i, position.i + position.relevantSubwordMaxLength)
 
     state |~ elementaryTransition(position, vector)

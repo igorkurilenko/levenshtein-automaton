@@ -35,7 +35,7 @@ public class EncodedParametricDescriptionTest {
                 factory.getParametricDescription(degree, inclTransposition);
         int failureStateId = 185;
 
-        assertTrue(description.isStateFailure(failureStateId));
+        assertTrue(description.isFailureState(failureStateId));
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -69,6 +69,6 @@ public class EncodedParametricDescriptionTest {
         int stateId = 44;
         String word = "abcdefg";
 
-        assertTrue(description.isStateFinal(stateId, StringUtil.codePointCount(word)));
+        assertTrue(description.isFinalState(stateId, StringUtil.codePointCount(word)));
     }
 }
