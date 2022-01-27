@@ -39,8 +39,9 @@ public final class CharacteristicVectorCodec {
      * and {@code k = until - 1}. If the specified interval is invalid then an empty vector will
      * be returned (no exceptions are thrown).
      * <p>
+     * <b>Note:</b>
+     * </p>
      * <p>
-     * <b>Note:</b><br/>
      * If {@code until - from} exceeds
      * {@link CharacteristicVectorCodec#MAX_ALLOWED_VECTOR_SIZE}
      * then invalid characteristic vector will be returned.

@@ -63,7 +63,6 @@ public class EncodedParametricDescription implements ParametricDescription {
      *                                        but the {@code f - stateLength} addendum (where {@code f}
      *                                        is the degree of the max boundary position fo the state) is static for
      *                                        each state.
-     *                                        </p>
      */
     public EncodedParametricDescription(int degree,
                                         boolean inclTransposition,
@@ -81,8 +80,8 @@ public class EncodedParametricDescription implements ParametricDescription {
     /**
      * Returns the degree of the Levenshtein-automaton this {@code EncodedParametricDescription}
      * is created for.
+     * <p><b>Note:</b></p>
      * <p>
-     * <p><b>Note:</b><br/>
      * Automaton recognizes the set of all words
      * where the Levenshtein-distance between a word from the set
      * and a word the automaton is built for does not exceed the degree.

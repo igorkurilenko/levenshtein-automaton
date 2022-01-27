@@ -26,7 +26,9 @@ import static io.itdraft.levenshteinautomaton.util.StringUtil.toCodePoints;
  * A class to represent the Levenshtein-automaton. Actual computation of states isn't
  * performed because parametric automaton is based on the parametric description.
  * <p>
- * <b>Note:</b><br/>
+ * <b>Note:</b>
+ * </p>
+ * <p>
  * Lazy because computes a characteristic vector on every transition.
  * </p>
  */
