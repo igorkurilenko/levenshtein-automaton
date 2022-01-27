@@ -1,8 +1,6 @@
 # Levenshtein-automaton
 
-[![Build Status](https://travis-ci.org/itdraft/levenshtein-automaton.svg?branch=develop)](https://travis-ci.org/itdraft/levenshtein-automaton)
-
-## Example.scala
+Usage example:
 ```scala
 val dictionaryWord: String = ...
 val misspelledWord: String = ...
